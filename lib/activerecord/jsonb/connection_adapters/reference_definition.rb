@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module ActiveRecord
   module JSONB
     module ConnectionAdapters
       module ReferenceDefinition #:nodoc:
-        # rubocop:disable Lint/UnusedMethodArgument, Metrics/ParameterLists
+        # rubocop:disable Metrics/ParameterLists
         def initialize(
           name,
           polymorphic: false,
@@ -16,14 +18,14 @@ module ActiveRecord
 
           super(
             name,
-            polymorphic: false,
-            index: true,
-            foreign_key: false,
-            type: :bigint,
+            polymorphic: polymorphic,
+            index: index,
+            foreign_key: foreign_key,
+            type: type,
             **options
           )
         end
-        # rubocop:enable Lint/UnusedMethodArgument, Metrics/ParameterLists
+        # rubocop:enable Metrics/ParameterLists
 
         def add_to(table)
           return super unless store
