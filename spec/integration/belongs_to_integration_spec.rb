@@ -168,5 +168,19 @@ RSpec.describe ':belongs_to' do
         let(:foreign_key) { :supplier_id }
       end
     end
+
+    context 'when 2 associations on one model have the same foreign_key' do
+      it 'raises an error' do
+        expect do
+          class Foo < User
+            belongs_to :bar, store: :extra, foreign_key: :bar_id, class_name: "User"
+            belongs_to :baz, store: :extra, foreign_key: :bar_id, class_name: "User"
+          end
+        end.to raise_error(
+          AssociateJsonb::Associations::ConflictingAssociation,
+          'Association with foreign key :bar_id already exists on Foo'
+        )
+      end
+    end
   end
 end

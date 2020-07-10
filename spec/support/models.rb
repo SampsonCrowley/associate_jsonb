@@ -1,3 +1,13 @@
+class User < ActiveRecord::Base; end
+class GoodsSupplier < ActiveRecord::Base; end
+class Profile < ActiveRecord::Base; end
+class Account < ActiveRecord::Base; end
+class Photo < ActiveRecord::Base; end
+class InvoicePhoto < ActiveRecord::Base; end
+class SocialProfile < ActiveRecord::Base; end
+class Label < ActiveRecord::Base; end
+class Group < ActiveRecord::Base; end
+
 class User < ActiveRecord::Base
   # regular :has_one association
   has_one :profile
@@ -12,7 +22,7 @@ class User < ActiveRecord::Base
   has_many :social_profiles, foreign_store: :extra
 
   # :has_and_belongs_to_many association with JSONB store
-  has_and_belongs_to_many :labels, store: :extra
+  has_and_belongs_to_many :labels, store: :sub_data
 
   # regular :has_and_belongs_to_many association
   has_and_belongs_to_many :groups

@@ -3,7 +3,7 @@ require 'database_cleaner'
 require 'factory_bot'
 require 'pry'
 
-require 'activerecord/jsonb/associations'
+require 'associate_jsonb'
 
 require 'support/helpers/queries_counter'
 require 'support/schema'

@@ -1,10 +1,10 @@
-# activerecord-json-associations
+# associate_jsonb
 
-[![Gem Version](https://badge.fury.io/rb/activerecord-jsonb-associations.svg)](https://badge.fury.io/rb/activerecord-jsonb-associations)
+[![Gem Version](https://badge.fury.io/rb/associate_jsonb.svg)](https://badge.fury.io/rb/associate_jsonb)
 
-Use PostgreSQL JSONB fields to store association information of your models.
+Basic ActiveRecord Associations using PostgreSQL JSONB columns, with built-in accessors and column indexes
 
-This gem was created as a solution to this [task](http://cultofmartians.com/tasks/active-record-jsonb-associations.html) from [EvilMartians](http://evilmartians.com).
+<!-- This gem was created as a solution to this [task](http://cultofmartians.com/tasks/active-record-jsonb-associations.html) from [EvilMartians](http://evilmartians.com).
 
 **Requirements:**
 
@@ -19,7 +19,7 @@ You can store all foreign keys of your model in one JSONB column, without having
 ```ruby
 class Profile < ActiveRecord::Base
   # Setting additional :store option on :belongs_to association
-  # enables saving of foreign ids in :extra JSONB column 
+  # enables saving of foreign ids in :extra JSONB column
   belongs_to :user, store: :extra
 end
 
@@ -67,18 +67,18 @@ Getting the count of connected records is ~35% faster with associations via JSON
 
 Adding new connections is slightly faster with JSONB, for scopes up to 500 records connected to another record (total count of records in the table does not matter that much. If you have more then ~500 records connected to one record on average, and you want to add new records to the scope, JSONB associations will be slower then traditional:
 
-<img src="https://github.com/lebedev-yury/activerecord-jsonb-associations/blob/master/doc/images/adding-associations.png?raw=true | width=500" alt="JSONB HAMTB is slower on adding associations" width="600">
+<img src="https://github.com/lebedev-yury/associate_jsonb/blob/master/doc/images/adding-associations.png?raw=true | width=500" alt="JSONB HAMTB is slower on adding associations" width="600">
 
 On the other hand, unassociating models from a big amount of associated models if faster with JSONB HABTM as the associations count grows:
 
-<img src="https://github.com/lebedev-yury/activerecord-jsonb-associations/blob/master/doc/images/deleting-associations.png?raw=true | width=500" alt="JSONB HAMTB is faster on removing associations" width="600">
+<img src="https://github.com/lebedev-yury/associate_jsonb/blob/master/doc/images/deleting-associations.png?raw=true | width=500" alt="JSONB HAMTB is faster on removing associations" width="600">
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'activerecord-jsonb-associations'
+gem 'associate_jsonb'
 ```
 
 And then execute:
@@ -105,7 +105,7 @@ To run benchmarks (that will take a while):
 
 ```bash
 $ bundle exec rake benchmarks:habtm
-```
+``` -->
 
 ## License
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).

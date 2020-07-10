@@ -1,9 +1,17 @@
 #!/usr/bin/env ruby
 
-require 'bundler/setup'
-require 'activerecord/jsonb/associations'
+require "bundler/setup"
+require "associate_jsonb"
+require "factory_bot"
+require File.expand_path("../../spec/support/schema.rb", __FILE__)
+require File.expand_path("../../spec/support/models.rb", __FILE__)
+require File.expand_path("../../spec/support/factories.rb", __FILE__)
 
 ActiveRecord::Base.logger = Logger.new(STDOUT)
 
-require 'pry'
+10.times { FactoryBot.create :user }
+10.times { FactoryBot.create :label }
+10.times { FactoryBot.create :account }
+
+require "pry"
 Pry.start

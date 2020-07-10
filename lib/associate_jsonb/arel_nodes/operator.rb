@@ -1,6 +1,6 @@
-module Arel
-  module Nodes
-    class JSONBOperator < ::Arel::Nodes::InfixOperation #:nodoc:
+module AssociateJsonb
+  module ArelNodes
+    class Operator < ::Arel::Nodes::InfixOperation #:nodoc:
       attr_reader :relation
       attr_reader :name
 
