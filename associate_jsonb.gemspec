@@ -2,6 +2,7 @@ $:.push File.expand_path("lib", __dir__)
 
 # Maintain gem's version:
 require "associate_jsonb/version"
+require "associate_jsonb/supported_rails_version"
 
 Gem::Specification.new do |s|
   s.name        = "associate_jsonb"
@@ -30,7 +31,10 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.7"
 
-  s.add_dependency "rails",    "~> 6",   ">= 6.0.3.1"
+  s.add_dependency "rails",
+    "~> #{AssociateJsonb::SUPPORTED_RAILS_VERSION.split(".")[0...-1].join(".")}",
+    ">= #{AssociateJsonb::SUPPORTED_RAILS_VERSION}"
+
   s.add_dependency "pg",       "~> 1.1", ">= 1.1.2"
   s.add_dependency "zeitwerk", "~> 2",   ">= 2.2.2"
   s.add_dependency "mutex_m",  "~> 0.1", ">= 0.1.0"

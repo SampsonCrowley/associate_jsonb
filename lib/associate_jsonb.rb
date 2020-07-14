@@ -12,6 +12,7 @@ require "mutex_m"
 
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
+loader.inflector.inflect "supported_rails_version" => "SUPPORTED_RAILS_VERSION"
 loader.setup # ready!
 
 module AssociateJsonb

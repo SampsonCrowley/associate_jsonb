@@ -4,5 +4,7 @@ log/*.log
 pkg/
 .DS_Store
 
+associate_jsonb-*.gem
+
 spec/config/database.yml
 spec/config/schema.*

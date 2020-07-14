@@ -106,6 +106,15 @@ module AssociateJsonb
            is_array \
             ? "write_attribute(:#{attribute}, Array(given))" \
             : "super(given)"
+        on_store_change = ->(var) {
+          "write_attribute(:#{attribute}, #{
+            is_array \
+             ? "Array(#{var})" \
+             : var
+          })"
+        }
+
+
         if is_array
           mixin.class_eval <<-CODE, __FILE__, __LINE__ + 1
             def #{attribute}
@@ -116,10 +125,14 @@ module AssociateJsonb
 
         mixin.class_eval <<-CODE, __FILE__, __LINE__ + 1
           def #{store}=(given)
-            given = super((given || {}).with_indifferent_access)
-            write_attribute(:#{attribute}, given["#{key}"])
-            given["#{key}"] = #{attribute} unless #{attribute}.nil?
-            super(given)
+            super(given || {})
+            write_attribute(:#{attribute}, #{on_store_change.call %Q(#{store}["#{key}"])})
+            if #{attribute}.blank?
+              #{store}.delete("#{key}")
+            else
+              #{store}["#{key}"] = #{attribute}
+            end
+            #{store}
           end
 
           def #{attribute}=(given)
