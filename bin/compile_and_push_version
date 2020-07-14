@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ -f ./associate_jsonb.gemspec ]; then
+  gem build associate_jsonb.gemspec
+  gem push associate_jsonb-*.gem
+  rm associate_jsonb-*.gem
+fi
