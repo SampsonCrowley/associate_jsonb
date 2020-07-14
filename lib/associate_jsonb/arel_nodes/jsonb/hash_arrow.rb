@@ -4,7 +4,7 @@
 module AssociateJsonb
   module ArelNodes
     module Jsonb
-      class HashArrow < AssociateJsonb::ArelNodes::Operator #:nodoc:
+      class HashArrow < AssociateJsonb::ArelNodes::Jsonb::Operator #:nodoc:
         def operator
           '#>'
         end

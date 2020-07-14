@@ -4,7 +4,7 @@
 module AssociateJsonb
   module ArelNodes
     module Jsonb
-      class DashArrow < AssociateJsonb::ArelNodes::Operator #:nodoc:
+      class DashArrow < AssociateJsonb::ArelNodes::Jsonb::Operator #:nodoc:
         def operator
           '->'
         end

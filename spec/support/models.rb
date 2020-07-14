@@ -21,8 +21,8 @@ class User < ActiveRecord::Base
   # :has_many association with JSONB store
   has_many :social_profiles, foreign_store: :extra
 
-  # :has_and_belongs_to_many association with JSONB store
-  has_and_belongs_to_many :labels, store: :sub_data
+  # :has_many association with JSONB store using custom key and non-standard foreign_key
+  has_many :labels, foreign_store: :extra, foreign_key: :owner_id, foreign_store_key: :label_user
 
   # regular :has_and_belongs_to_many association
   has_and_belongs_to_many :groups
@@ -66,7 +66,7 @@ class SocialProfile < ActiveRecord::Base
 end
 
 class Label < ActiveRecord::Base
-  has_and_belongs_to_many :users, store: :extra
+  belongs_to :user, store: :extra, foreign_key: :owner_id, store_key: :label_user
 end
 
 class Group < ActiveRecord::Base

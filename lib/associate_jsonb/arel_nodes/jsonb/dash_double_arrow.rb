@@ -4,7 +4,7 @@
 module AssociateJsonb
   module ArelNodes
     module Jsonb
-      class DashDoubleArrow < AssociateJsonb::ArelNodes::Operator #:nodoc:
+      class DashDoubleArrow < AssociateJsonb::ArelNodes::Jsonb::Operator #:nodoc:
         def operator
           '->>'
         end

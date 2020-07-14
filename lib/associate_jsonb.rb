@@ -26,6 +26,7 @@ ActiveSupport.on_load :active_record do
   ActiveRecord::Base.include AssociateJsonb::Associations
 
   Arel::Nodes.include AssociateJsonb::ArelNodes
+  Arel::Nodes::Binary.include AssociateJsonb::ArelNodeExtensions::Binary
 
   ActiveRecord::Associations::Builder::BelongsTo.extend(
     AssociateJsonb::Associations::Builder::BelongsTo
@@ -64,6 +65,7 @@ ActiveSupport.on_load :active_record do
   # )
 
   ActiveRecord::Reflection::AbstractReflection.prepend AssociateJsonb::Reflection
+  ActiveRecord::Relation::WhereClause.prepend AssociateJsonb::Relation::WhereClause
 
   ActiveRecord::ConnectionAdapters::ReferenceDefinition.prepend(
     AssociateJsonb::ConnectionAdapters::ReferenceDefinition

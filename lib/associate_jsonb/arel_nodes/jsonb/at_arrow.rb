@@ -4,7 +4,7 @@
 module AssociateJsonb
   module ArelNodes
     module Jsonb
-      class AtArrow < AssociateJsonb::ArelNodes::BindableOperator
+      class AtArrow < AssociateJsonb::ArelNodes::Jsonb::BindableOperator
         def operator
           '@>'
         end

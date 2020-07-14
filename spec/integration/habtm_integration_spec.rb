@@ -218,14 +218,5 @@ RSpec.describe ':has_and_belongs_to_many' do
       let(:child_class) { Group }
     end
   end
-
-  context 'association with :store option set' do
-    include_examples ':has_and_belongs_to_many association',
-                     store_type: :jsonb do
-      let(:parent_class) { User }
-      let(:child_class) { Label }
-      let(:store) { :extra }
-    end
-  end
 end
 # rubocop:enable Metrics/BlockLength

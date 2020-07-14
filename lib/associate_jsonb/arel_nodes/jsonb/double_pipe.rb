@@ -4,7 +4,7 @@
 module AssociateJsonb
   module ArelNodes
     module Jsonb
-      class DoublePipe < AssociateJsonb::ArelNodes::BindableOperator #:nodoc:
+      class DoublePipe < AssociateJsonb::ArelNodes::Jsonb::BindableOperator #:nodoc:
         def operator
           '||'
         end

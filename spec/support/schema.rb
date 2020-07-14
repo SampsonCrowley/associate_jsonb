@@ -5,12 +5,14 @@ db_config = YAML.load_file(
   File.expand_path("../../config/database.yml", __FILE__)
 ).fetch("pg")
 
-ActiveRecord::Base.establish_connection(
+db_config = {
   adapter: "postgresql",
-  database: "activerecord_jsonb_associations_test",
+  database: "associate_jsonb_gem_test",
   username: db_config.fetch("username"),
   min_messages: "warning"
-)
+}.with_indifferent_access
+
+ActiveRecord::Base.establish_connection(db_config)
 
 ActiveRecord::Migration.verbose = false
 
@@ -67,3 +69,15 @@ ActiveRecord::Schema.define do
   end
 end
 # rubocop:enable Metrics/BlockLength
+
+original_schema = ENV["SCHEMA"]
+
+dump_new_schema = ->(ext, type = nil) do
+  ENV["SCHEMA"] = File.expand_path("../../config/schema.#{ext}", __FILE__)
+  ActiveRecord::Tasks::DatabaseTasks.dump_schema(db_config, type || ext)
+ensure
+  ENV["SCHEMA"] = original_schema
+end
+
+dump_new_schema.call(:sql)
+dump_new_schema.call("rb", :ruby)

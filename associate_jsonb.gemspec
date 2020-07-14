@@ -6,15 +6,19 @@ require "associate_jsonb/version"
 Gem::Specification.new do |s|
   s.name        = "associate_jsonb"
   s.version     = AssociateJsonb::VERSION
-  s.authors     = ["Sampson Crowley", "Yury Lebedev"]
+  s.authors     = ["Sampson Crowley"]
   s.email       = ["sampsonsprojects@gmail.com"]
   s.homepage    = "https://github.com/SampsonCrowley/associate_jsonb"
   s.license     = "MIT"
   s.summary     = "Store database references in PostgreSQL Jsonb columns"
   s.description = <<-BODY
-    This gem extends ActiveRecord to let you use json data for associations
+    This gem extends ActiveRecord to let you use PostgreSQL JSONB data for associations
+
     Inspired by activerecord-jsonb-associations, but for use in Rails 6+ and
-    ruby 2.7+
+    ruby 2.7+ and with some unnecessary options and features (HABTM) removed
+
+    BONUS: extended `table#references` for easy migrations and indexes
+    (NOTE: real foreign key constraints are not possible with PostgreSQL JSONB)
   BODY
 
   s.files = Dir[

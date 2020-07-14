@@ -5,3 +5,4 @@ pkg/
 .DS_Store
 
 spec/config/database.yml
+spec/config/schema.*

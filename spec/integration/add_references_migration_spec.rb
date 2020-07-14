@@ -42,6 +42,7 @@ RSpec.describe ':add_references migration command' do
       end
 
       AddUsersReferenceToSocialProfiles.new.change
+      ActiveRecord::Base.connection.schema_cache.clear!
     end
 
     it "creates :foo column with :jsonb type" do
@@ -70,7 +71,7 @@ RSpec.describe ':add_references migration command' do
 
   describe 'index usage' do
     let(:parent) { create :user }
-    let!(:children) { create_list :social_profile, 3, user: parent }
+    let!(:children) { create_list :social_profile, 1000, user: parent }
     let(:index_name) { 'index_social_profiles_on_extra_user_id' }
 
     it "does index scan when getting associated models" do
@@ -79,10 +80,10 @@ RSpec.describe ':add_references migration command' do
       ).to include("Bitmap Index Scan on #{index_name}")
     end
 
-    it "does index scan on #eager_load" do
-      expect(
-        User.all.eager_load(:social_profiles).explain
-      ).to include("Index Scan using #{index_name}")
+    it "does index or hash scan on #eager_load" do
+      expect(User.all.eager_load(:social_profiles).explain).
+        to match(/Hash\s+Cond:\s+\(+social_profiles.extra[^)]+\)+::bigint\s+\=\s+users.id/).
+        or( include("Index Scan using #{index_name}") )
     end
   end
 end

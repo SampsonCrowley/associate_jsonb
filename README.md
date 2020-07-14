@@ -45,19 +45,7 @@ add_reference :profiles, :users, store: :extra, index: true
 
 ### Many-to-many associations
 
-You can also use JSONB columns on 2 sides of a HABTM association. This way you won't have to create a join table.
-
-```ruby
-class Label < ActiveRecord::Base
-  # extra['user_ids'] will store associated user ids
-  has_and_belongs_to_many :users, store: :extra
-end
-
-class User < ActiveRecord::Base
-  # extra['label_ids'] will store associated label ids
-  has_and_belongs_to_many :labels, store: :extra
-end
-```
+Due to the ease of getting out-of-sync, and the complexity needed to build it, HABTM relation functionality has not been implemented through JSONB
 
 #### Performance
 

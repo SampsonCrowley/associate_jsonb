@@ -6,7 +6,7 @@ module AssociateJsonb
     module Builder
       module HasOne #:nodoc:
         def valid_options(options)
-          super + %i[ foreign_store foreign_store_attr ]
+          super + %i[ foreign_store foreign_store_key ]
         end
       end
     end
