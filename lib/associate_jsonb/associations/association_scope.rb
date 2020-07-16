@@ -4,6 +4,22 @@
 module AssociateJsonb
   module Associations
     module AssociationScope #:nodoc:
+
+      def get_chain(reflection, association, tracker)
+        name = reflection.name
+        chain = [ActiveRecord::Reflection::RuntimeReflection.new(reflection, association)]
+        reflection.chain.drop(1).each do |refl|
+          aliased_table = tracker.aliased_table_for(
+            refl.table_name,
+            refl.alias_candidate(name),
+            refl.klass.type_caster,
+            refl.klass.store_column_attribute_tracker
+          )
+          chain << ActiveRecord::Associations::AssociationScope::ReflectionProxy.new(refl, aliased_table)
+        end
+        chain
+      end
+
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def last_chain_scope(scope, owner_reflection, owner)
         reflection = owner_reflection.instance_variable_get(:@reflection)
@@ -42,23 +58,6 @@ module AssociateJsonb
           node_klass = Arel::Nodes::Jsonb::DashDoubleArrow
         end
 
-        # scope.where!(
-        #   Arel::Nodes::HashableNamedFunction.new(
-        #     "CAST",
-        #     [
-        #       node_klass.
-        #         new(table, table[jsonb_column], store_key).
-        #         as(sql_type)
-        #     ]
-        #   ).eq(
-        #     Arel::Nodes::BindParam.new(
-        #       ActiveRecord::Relation::QueryAttribute.new(
-        #         store_key, value, type
-        #       )
-        #     )
-        #   )
-        # )
-
         scope.where!(
           Arel::Nodes::SqlCastedEquality.new(
             node_klass.new(table, table[jsonb_column], store_key),
@@ -70,30 +69,6 @@ module AssociateJsonb
             )
           )
         )
-
-        # scope.where!(
-        #   Arel::Nodes::Jsonb::DashDoubleArrow.
-        #     new(table, table[jsonb_column], store_key).
-        #     eq(
-        #       Arel::Nodes::BindParam.new(
-        #         ActiveRecord::Relation::QueryAttribute.new(
-        #           store_key, value, ActiveModel::Type::String.new
-        #         )
-        #       )
-        #     )
-        # )
-
-        # scope.where!(
-        #   node_klass.new(
-        #     table, table[jsonb_column], store_key
-        #   ).eq(
-        #     Arel::Nodes::BindParam.new(
-        #       ActiveRecord::Relation::QueryAttribute.new(
-        #         store_key, value, type
-        #       )
-        #     )
-        #   )
-        # )
       end
     end
   end

@@ -15,6 +15,22 @@ module AssociateJsonb
           [name, value]
         }.to_h
       end
+
+      private
+        def equalities(predicates)
+          equalities = []
+
+          predicates.each do |node|
+            case node
+            when Arel::Nodes::Equality, Arel::Nodes::SqlCastedEquality
+              equalities << node
+            when Arel::Nodes::And
+              equalities.concat equalities(node.children)
+            end
+          end
+
+          equalities
+        end
     end
   end
 end

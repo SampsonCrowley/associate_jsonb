@@ -33,6 +33,7 @@ module AssociateJsonb
 
           opts = {}
           foreign_type = :integer
+          sql_type = "numeric"
           begin
             primary_key = reflection.active_record_primary_key.to_s
             primary_column = reflection.klass.columns.find {|col| col.name == primary_key }
@@ -40,6 +41,7 @@ module AssociateJsonb
             if primary_column
               foreign_type = primary_column.type
               sql_data = primary_column.sql_type_metadata.as_json
+              sql_type = sql_data["sql_type"]
               %i[ limit precision scale ].each do |k|
                 opts[k] = sql_data[k.to_s] if sql_data[k.to_s]
               end
@@ -50,7 +52,7 @@ module AssociateJsonb
           end
 
           mixin.instance_eval <<-CODE, __FILE__, __LINE__ + 1
-            store_column_attribute(:#{store}, :#{foreign_key}, :#{foreign_type}, key: "#{key}", **opts)
+            store_column_attribute(:#{store}, :#{foreign_key}, foreign_type, sql_type: sql_type, key: "#{key}", **opts)
           CODE
         end
       end

@@ -27,7 +27,27 @@ ActiveSupport.on_load :active_record do
   ActiveRecord::Base.include AssociateJsonb::Associations
 
   Arel::Nodes.include AssociateJsonb::ArelNodes
-  Arel::Nodes::Binary.include AssociateJsonb::ArelNodeExtensions::Binary
+
+  Arel::Nodes::Binary.prepend(
+    AssociateJsonb::ArelExtensions::Nodes::Binary
+  )
+
+  Arel::Nodes::TableAlias.prepend(
+    AssociateJsonb::ArelExtensions::Nodes::TableAlias
+  )
+
+  Arel::Table.prepend(
+    AssociateJsonb::ArelExtensions::Table
+  )
+
+  Arel::Visitors::Visitor.singleton_class.prepend(
+    AssociateJsonb::ArelExtensions::Visitors::Visitor
+  )
+
+
+  ActiveRecord::Associations::AliasTracker.prepend(
+    AssociateJsonb::Associations::AliasTracker
+  )
 
   ActiveRecord::Associations::Builder::BelongsTo.extend(
     AssociateJsonb::Associations::Builder::BelongsTo

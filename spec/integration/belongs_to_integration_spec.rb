@@ -158,6 +158,22 @@ RSpec.shared_examples ":belongs_to association" do |store_type: :regular, reflec
       end).to eq(1)
     end
   end
+
+  describe "#where" do
+    let!(:created_association) do
+      assc = child_model.send "create_#{parent_name}"
+      child_model.save
+      assc
+    end
+
+    it "properly queries the correct casted column", if: reflection_type.eql?(:has_one) do
+      expect(child_class.find_by(foreign_key => created_association.id)).to eq(child_model)
+    end
+
+    it "properly queries the correct casted column" do
+      expect(child_class.where(foreign_key => created_association.id)).to include(child_model)
+    end
+  end
 end
 
 RSpec.describe ":belongs_to" do

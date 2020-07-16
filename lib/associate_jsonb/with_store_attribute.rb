@@ -12,13 +12,24 @@ module AssociateJsonb
         @names_list ||= {}
       end
 
-      def add_name(name, store, key)
-        @names_list ||= {}
-        @names_list[name.to_s.freeze] = { store: store, key: key }
+      def add_name(name, store, key, cast)
+        names_list[name.to_s.freeze] = { store: store, key: key, cast: cast }
       end
 
       def has_name?(name)
         names_list.key? name.to_s
+      end
+
+      def get(name)
+        names_list[name.to_s]
+      end
+
+      def store_for(name)
+        (get(name) || {})[:store]
+      end
+
+      def key_for(name)
+        (get(name) || {})[:key]
       end
     end
 
@@ -35,6 +46,10 @@ module AssociateJsonb
       def inherited(child)
         child.initialize_store_column_attribute_tracker
         super
+      end
+
+      def arel_table
+        super.with_store_tracker(store_column_attribute_tracker)
       end
 
       def initialize_store_column_attribute_tracker
@@ -56,9 +71,9 @@ module AssociateJsonb
         end
       end
 
-      def add_store_column_attribute_name(name, store, key)
+      def add_store_column_attribute_name(name, store, key, cast_opts)
         store_column_attribute_tracker.synchronize do
-          store_column_attribute_tracker.add_name(name, store, key)
+          store_column_attribute_tracker.add_name(name, store, key, cast_opts)
         end
       end
 
@@ -83,16 +98,16 @@ module AssociateJsonb
         store_column_attribute :data, *args, **opts
       end
 
-      def store_column_attribute(store, attr, *opts, key: nil, **attribute_opts)
+      def store_column_attribute(store, attr, cast_type = ActiveRecord::Type::Value.new, sql_type: nil, key: nil, **attribute_opts)
         store = store.to_sym
         attr = attr.to_sym
         key ||= attr
         key = key.to_s
         array = attribute_opts[:array]
-        attribute attr, *opts, **attribute_opts
+        attribute attr, cast_type, **attribute_opts
 
         instance_eval <<-CODE, __FILE__, __LINE__ + 1
-          add_store_column_attribute_name("#{attr}", :#{store}, "#{key}")
+          add_store_column_attribute_name("#{attr}", :#{store}, "#{key}", { sql_type: sql_type, type: cast_type, opts: attribute_opts })
         CODE
 
         include WithStoreAttribute::InstanceMethodsOnActivation.new(self, store, attr, key, array)
