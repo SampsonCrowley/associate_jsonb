@@ -23,7 +23,7 @@ module AssociateJsonb
       def [](name)
         return super unless store_col = store_tracker&.get(name)
 
-        attr = ::Arel::Nodes::Jsonb::DashArrow.
+        attr = ::Arel::Nodes::Jsonb::DashDoubleArrow.
           new(self, self[store_col[:store]], store_col[:key])
 
         if cast_as = (store_col[:cast] && store_col[:cast][:sql_type])

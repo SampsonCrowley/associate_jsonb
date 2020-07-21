@@ -2,7 +2,9 @@
 
 [![Gem Version](https://badge.fury.io/rb/associate_jsonb.svg)](https://badge.fury.io/rb/associate_jsonb)
 
-Basic ActiveRecord Associations using PostgreSQL JSONB columns, with built-in accessors and column indexes
+#### PostgreSQL JSONB extensions including:
+  - Basic ActiveRecord Associations using PostgreSQL JSONB columns, with built-in accessors and column indexes
+  - Thread-Safe JSONB updates (well, as safe as they can be) using `jsonb_set`
 
 <!-- This gem was created as a solution to this [task](http://cultofmartians.com/tasks/active-record-jsonb-associations.html) from [EvilMartians](http://evilmartians.com).
 

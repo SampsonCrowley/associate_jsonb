@@ -61,9 +61,13 @@ RSpec.shared_examples ":belongs_to association" do |store_type: :regular, reflec
     end
 
     it "sets foreign key on child model in jsonb store on parent save", if: store_type.eql?(:jsonb) && reflection_type.eql?(:has_one) do
+      $debug = true
+      built_association = child_model.send("build_#{parent_name}")
       built_association.save
 
       expect(child_model.send(store)).to eq(store_key => built_association.id)
+    ensure
+      $debug = false
     end
 
     it "sets foreign key on child model on parent save", if: reflection_type.eql?(:has_one) do
@@ -77,7 +81,7 @@ RSpec.shared_examples ":belongs_to association" do |store_type: :regular, reflec
       built_association.reload
 
       expect(child_model.send(parent_name)).to eq(built_association)
-      expect(child_model.send(store)).to eq({})
+      expect(child_model.send(store)).to eq({ store_key => nil })
 
       child_model.save
 
@@ -110,11 +114,11 @@ RSpec.shared_examples ":belongs_to association" do |store_type: :regular, reflec
       expect(child_model.reload.send(foreign_key)).to eq(created_association.id)
     end
 
-    it "sets foreign key on child model in jsonb store", if: store_type.eql?(:jsonb) && reflection_type.eql?(:has_many) do
+    it "sets foreign key on child model in jsonb store", if: store_type.eql?(:jsonb) do
       expect(child_model.send(store)).to eq(store_key => created_association.id)
     end
 
-    it "sets and persists foreign key on child model", if: reflection_type.eql?(:has_many) do
+    it "sets and persists foreign key on child model" do
       expect(child_model.send(foreign_key)).to eq(created_association.id)
     end
   end
@@ -228,6 +232,17 @@ RSpec.describe ":belongs_to" do
           let(:store) { :extra }
           let(:foreign_key) { :owner_id }
           let(:store_key) { "label_user" }
+        end
+      end
+
+      context "(foreign_key, store_key)" do
+        include_examples ":belongs_to association", store_type: :jsonb, reflection_type: :has_one do
+          let(:parent_model) { Uuid.create }
+          let(:parent_name) { :uuid }
+          let(:child_model) { Label.new }
+          let(:store) { :extra }
+          let(:foreign_key) { :u_id }
+          let(:store_key) { "uuid" }
         end
       end
     end

@@ -22,6 +22,9 @@ FactoryBot.define do
     end
   end
 
+  factory :uuid do
+  end
+
   factory :goods_supplier do
     factory :supplier do
     end
@@ -62,6 +65,10 @@ FactoryBot.define do
   factory :label do
     trait :with_user do
       user
+    end
+
+    trait :with_uuid do
+      uuid
     end
   end
 

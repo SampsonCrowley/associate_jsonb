@@ -22,7 +22,10 @@ class User < ActiveRecord::Base
   has_many :social_profiles, foreign_store: :extra
 
   # :has_many association with JSONB store using custom key and non-standard foreign_key
-  has_many :labels, foreign_store: :extra, foreign_key: :owner_id, foreign_store_key: :label_user
+  has_many :labels, foreign_store: :extra,
+                    foreign_key: :owner_id,
+                    foreign_store_key: :label_user,
+                    inverse_of: :user
 
   # regular :has_and_belongs_to_many association
   has_and_belongs_to_many :groups
@@ -40,6 +43,13 @@ class GoodsSupplier < ActiveRecord::Base
   has_many :invoice_photos, foreign_store: :extra,
                             foreign_key: :supplier_id,
                             inverse_of: :supplier
+end
+
+class Uuid < ActiveRecord::Base
+  has_one :label, foreign_store: :extra,
+                  foreign_key: :u_id,
+                  foreign_store_key: :uuid,
+                  inverse_of: :uuid
 end
 
 class Profile < ActiveRecord::Base
@@ -66,7 +76,8 @@ class SocialProfile < ActiveRecord::Base
 end
 
 class Label < ActiveRecord::Base
-  belongs_to :user, store: :extra, foreign_key: :owner_id, store_key: :label_user
+  belongs_to :user, store: :extra, foreign_key: :owner_id, store_key: :label_user, inverse_of: :labels
+  belongs_to :uuid, store: :extra, foreign_key: :u_id, store_key: :uuid, inverse_of: :label
 end
 
 class Group < ActiveRecord::Base

@@ -60,7 +60,7 @@ module AssociateJsonb
           Arel::Nodes::NamedFunction.new(
             "CAST",
             [
-              Arel::Nodes::Jsonb::DashArrow.
+              Arel::Nodes::Jsonb::DashDoubleArrow.
                 new(table, table[foreign_store_attr], foreign_store_key || key).
                 as(foreign_klass.columns_hash[foreign_key.to_s].sql_type)
             ]
@@ -83,7 +83,7 @@ module AssociateJsonb
           Arel::Nodes::NamedFunction.new(
             "CAST",
             [
-              Arel::Nodes::Jsonb::DashArrow.
+              Arel::Nodes::Jsonb::DashDoubleArrow.
                 new(foreign_table, foreign_table[jsonb_store_attr], jsonb_store_key || foreign_key).
                 as(klass.columns_hash[key.to_s].sql_type)
             ]

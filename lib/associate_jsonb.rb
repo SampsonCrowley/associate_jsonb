@@ -12,10 +12,16 @@ require "mutex_m"
 
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
-loader.inflector.inflect "supported_rails_version" => "SUPPORTED_RAILS_VERSION"
+loader.inflector.inflect(
+  "postgresql" => "PostgreSQL",
+  "supported_rails_version" => "SUPPORTED_RAILS_VERSION"
+)
 loader.setup # ready!
 
 module AssociateJsonb
+  mattr_accessor :safe_hash_classes, default: [
+    ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Jsonb
+  ]
 end
 
 
@@ -25,6 +31,8 @@ ActiveSupport.on_load :active_record do
 
   ActiveRecord::Base.include AssociateJsonb::WithStoreAttribute
   ActiveRecord::Base.include AssociateJsonb::Associations
+  ActiveRecord::Base.include AssociateJsonb::AttributeMethods
+  ActiveRecord::Base.include AssociateJsonb::Persistence
 
   Arel::Nodes.include AssociateJsonb::ArelNodes
 
@@ -38,6 +46,10 @@ ActiveSupport.on_load :active_record do
 
   Arel::Table.prepend(
     AssociateJsonb::ArelExtensions::Table
+  )
+
+  Arel::Visitors::PostgreSQL.prepend(
+    AssociateJsonb::ArelExtensions::Visitors::PostgreSQL
   )
 
   Arel::Visitors::Visitor.singleton_class.prepend(
@@ -86,6 +98,7 @@ ActiveSupport.on_load :active_record do
   # )
 
   ActiveRecord::Reflection::AbstractReflection.prepend AssociateJsonb::Reflection
+  ActiveRecord::PredicateBuilder.prepend AssociateJsonb::PredicateBuilder
   ActiveRecord::Relation::WhereClause.prepend AssociateJsonb::Relation::WhereClause
 
   ActiveRecord::ConnectionAdapters::ReferenceDefinition.prepend(

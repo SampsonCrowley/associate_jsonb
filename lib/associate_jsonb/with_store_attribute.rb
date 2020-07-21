@@ -140,20 +140,23 @@ module AssociateJsonb
 
         mixin.class_eval <<-CODE, __FILE__, __LINE__ + 1
           def #{store}=(given)
-            super(given || {})
-            write_attribute(:#{attribute}, #{on_store_change.call %Q(#{store}["#{key}"])})
-            if #{attribute}.blank?
-              #{store}.delete("#{key}")
-            else
-              #{store}["#{key}"] = #{attribute}
+            if !given
+              given = {}
+              #{store}.keys.each do |k|
+                given[k] = nil
+              end
+            end
+            super(#{store}.deep_merge(given.deep_stringify_keys))
+            if #{store}.key?("#{key}")
+              write_attribute(:#{attribute}, #{on_store_change.call %Q(#{store}["#{key}"])})
+              #{store}["#{key}"] = #{attribute}.presence
             end
             #{store}
           end
 
           def #{attribute}=(given)
             #{on_attr_change}
-            value = #{store}["#{key}"] = #{attribute}
-            #{store}.delete("#{key}") if value.nil?
+            value = #{store}["#{key}"] = #{attribute}.presence
             _write_attribute(:#{store}, #{store})
             value
           end

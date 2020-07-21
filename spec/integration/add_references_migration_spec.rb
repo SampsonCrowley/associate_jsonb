@@ -32,12 +32,25 @@ RSpec.describe ':add_references migration command' do
     end
   end
 
+  let(:foo_index_on_uuid) do
+    schema_cache.connection.indexes(SocialProfile.table_name).find do |index|
+      index.name == "index_social_profiles_on_foo_uuid"
+    end
+  end
+
+  let(:foo_index_on_uuid_text) do
+    schema_cache.connection.indexes(SocialProfile.table_name).find do |index|
+      index.name == "index_social_profiles_on_foo_uuid_text"
+    end
+  end
+
   describe '#change' do
     before(:all) do
       class AddUsersReferenceToSocialProfiles < ActiveRecord::Migration[5.1]
         def change
           add_reference :social_profiles, :user, store: :foo
           add_reference :social_profiles, :supplier, store: :foo, index: false
+          add_reference :social_profiles, :uuid, store: :foo, store_key: :uuid, type: :uuid
         end
       end
 
@@ -50,9 +63,9 @@ RSpec.describe ':add_references migration command' do
       expect(foo_column.type).to eq(:jsonb)
     end
 
-    it "creates casted index on foo->'user_id'" do
+    it "creates casted a bigint index on foo->>'user_id'" do
       expect(foo_index_on_user_id).to be_present
-      expect(foo_index_on_user_id.columns).to eq("(((foo -> 'user_id'::text))::bigint)")
+      expect(foo_index_on_user_id.columns).to eq("(((foo ->> 'user_id'::text))::bigint)")
     end
 
     it "creates text index on foo->>'user_id'" do
@@ -66,6 +79,16 @@ RSpec.describe ':add_references migration command' do
 
     it "does not create a text index on foo->'supplier_id'" do
       expect(foo_index_on_supplier_id_text).to be_nil
+    end
+
+    it "creates a uuid casted index on foo->>'uuid'" do
+      expect(foo_index_on_uuid).to be_present
+      expect(foo_index_on_uuid.columns).to eq("(((foo ->> 'uuid'::text))::uuid)")
+    end
+
+    it "creates text index on foo->>'uuid'" do
+      expect(foo_index_on_uuid_text).to be_present
+      expect(foo_index_on_uuid_text.columns).to eq("((foo ->> 'uuid'::text))")
     end
   end
 

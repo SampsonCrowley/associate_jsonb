@@ -18,9 +18,15 @@ ActiveRecord::Migration.verbose = false
 
 # rubocop:disable Metrics/BlockLength
 ActiveRecord::Schema.define do
+  enable_extension :pgcrypto
+
   create_table :users, force: true do |t|
     t.jsonb :extra, null: false, default: {}
     t.jsonb :sub_data, null: false, default: {}
+    t.timestamps null: false
+  end
+
+  create_table :uuids, id: :uuid, force: true do |t|
     t.timestamps null: false
   end
 
@@ -55,9 +61,12 @@ ActiveRecord::Schema.define do
   end
 
   create_table :labels, force: true do |t|
-    t.jsonb :extra, null: false, default: {}
+    t.references :user, store: :extra, store_key: 'label_user', index: true
+    t.references :uuid, store: :extra, store_key: 'uuid', index: true, type: :uuid
     t.timestamps null: false
   end
+
+
 
   create_table :groups, force: true do |t|
     t.timestamps null: false

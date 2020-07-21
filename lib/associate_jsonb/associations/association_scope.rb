@@ -44,23 +44,21 @@ module AssociateJsonb
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       def apply_jsonb_equality(scope, table, jsonb_column, store_key, foreign_key, value, foreign_klass)
-        sql_type = type = node_klass = nil
+        sql_type = type = nil
         begin
           type = foreign_klass.attribute_types[foreign_key.to_s]
           raise "type not found" unless type.present?
           sql_type = foreign_klass.columns_hash[foreign_key.to_s]
           raise "not a column" unless sql_type.present?
           sql_type = sql_type.sql_type
-          node_klass = Arel::Nodes::Jsonb::DashArrow
         rescue
           type = ActiveModel::Type::String.new
           sql_type = "text"
-          node_klass = Arel::Nodes::Jsonb::DashDoubleArrow
         end
 
         scope.where!(
           Arel::Nodes::SqlCastedEquality.new(
-            node_klass.new(table, table[jsonb_column], store_key),
+            Arel::Nodes::Jsonb::DashDoubleArrow.new(table, table[jsonb_column], store_key),
             sql_type,
             Arel::Nodes::BindParam.new(
               ActiveRecord::Relation::QueryAttribute.new(
