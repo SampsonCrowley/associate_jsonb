@@ -1,8 +1,9 @@
+# encoding: utf-8
 # frozen_string_literal: true
 
 module AssociateJsonb
   module ConnectionAdapters
-    module ReferenceDefinition #:nodoc:
+    module ReferenceDefinition
       ForeignKeyDefinition = ActiveRecord::ConnectionAdapters::ForeignKeyDefinition
       # rubocop:disable Metrics/ParameterLists
       def initialize(
@@ -13,6 +14,7 @@ module AssociateJsonb
       )
         @store = store && store.to_sym
         @store_key = store_key && store_key.to_s unless options[:polymorphic]
+        @nullable = options[:null] != false
 
         super(name, **options)
       end
@@ -39,20 +41,24 @@ module AssociateJsonb
 
         if foreign_key && column_names.length == 1
           fk = ForeignKeyDefinition.new(table.name, foreign_table_name, foreign_key_options)
-          columns.each do |col_name, type, _|
+          columns.each do |col_name, type, options|
+            options ||= {}
             value = <<-SQL.squish
               jsonb_foreign_key(
-                '#{fk.to_table}',
-                '#{fk.active_record_primary_key}',
-                #{store},
-                '#{col_name}',
-                '#{type}'
+                '#{fk.to_table}'::text,
+                '#{fk.primary_key}'::text,
+                #{store}::jsonb,
+                '#{col_name}'::text,
+                '#{type}'::text,
+                #{nullable}
               )
             SQL
-            table.constraint({
+            table.constraint(
               name: "#{table.name}_#{col_name}_foreign_key",
-              value: value
-            })
+              value: value,
+              not_valid: true,
+              deferrable: true
+            )
           end
         end
 
@@ -76,7 +82,7 @@ module AssociateJsonb
 
       protected
 
-      attr_reader :store, :store_key
+      attr_reader :store, :store_key, :nullable
     end
   end
 end

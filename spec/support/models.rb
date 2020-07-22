@@ -83,3 +83,7 @@ end
 class Group < ActiveRecord::Base
   has_and_belongs_to_many :users
 end
+
+class FkTest < ActiveRecord::Base
+  belongs_to :user, store: :data, required: true
+end

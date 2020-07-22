@@ -16,6 +16,7 @@ loader.inflector.inflect(
   "postgresql" => "PostgreSQL",
   "supported_rails_version" => "SUPPORTED_RAILS_VERSION"
 )
+loader.collapse("#{__dir__}/associate_jsonb/connection_adapters/schema_definitions")
 loader.setup # ready!
 
 module AssociateJsonb
@@ -96,6 +97,30 @@ ActiveSupport.on_load :active_record do
   # ActiveRecord::Associations::Preloader::HasMany.prepend(
   #   AssociateJsonb::Associations::Preloader::HasMany
   # )
+  %i[
+    AlterTable
+    ConstraintDefinition
+    ReferenceDefinition
+    SchemaCreation
+    Table
+    TableDefinition
+  ].each do |m|
+    includable = AssociateJsonb::ConnectionAdapters.const_get(m)
+    including =
+      begin
+        ActiveRecord::ConnectionAdapters::PostgreSQL.const_get(m)
+      rescue NameError
+        ActiveRecord::ConnectionAdapters.const_get(m)
+      end
+    including.prepend includable
+  rescue NameError
+    ActiveRecord::ConnectionAdapters::PostgreSQL.const_set(m, includable)
+  end
+
+  ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.include(
+    AssociateJsonb::ConnectionAdapters::SchemaStatements
+  )
+
 
   ActiveRecord::Reflection::AbstractReflection.prepend AssociateJsonb::Reflection
   ActiveRecord::PredicateBuilder.prepend AssociateJsonb::PredicateBuilder

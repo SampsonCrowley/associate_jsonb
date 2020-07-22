@@ -20,6 +20,8 @@ ActiveRecord::Migration.verbose = false
 ActiveRecord::Schema.define do
   enable_extension :pgcrypto
 
+  add_jsonb_foreign_key_function
+
   create_table :users, force: true do |t|
     t.jsonb :extra, null: false, default: {}
     t.jsonb :sub_data, null: false, default: {}
@@ -61,12 +63,14 @@ ActiveRecord::Schema.define do
   end
 
   create_table :labels, force: true do |t|
-    t.references :user, store: :extra, store_key: 'label_user', index: true
+    t.references :user, store: :extra, store_key: 'label_user', index: true, foreign_key: true
     t.references :uuid, store: :extra, store_key: 'uuid', index: true, type: :uuid
     t.timestamps null: false
   end
 
-
+  create_table :fk_tests, force: true do |t|
+    t.references :user, store: :data, index: false, foreign_key: true, null: false
+  end
 
   create_table :groups, force: true do |t|
     t.timestamps null: false

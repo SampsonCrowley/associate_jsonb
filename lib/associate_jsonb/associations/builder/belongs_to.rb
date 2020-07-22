@@ -22,7 +22,7 @@ module AssociateJsonb
           key = (reflection.jsonb_store_key || foreign_key).to_s
           store = reflection.jsonb_store_attr
 
-          mixin.instance_eval <<-CODE, __FILE__, __LINE__ + 1
+          mixin.instance_eval <<~CODE, __FILE__, __LINE__ + 1
             if attribute_names.include?(foreign_key)
               raise AssociateJsonb::Associations::
                       ConflictingAssociation,
@@ -51,7 +51,7 @@ module AssociateJsonb
             foreign_type = :integer
           end
 
-          mixin.instance_eval <<-CODE, __FILE__, __LINE__ + 1
+          mixin.instance_eval <<~CODE, __FILE__, __LINE__ + 1
             store_column_attribute(:#{store}, :#{foreign_key}, foreign_type, sql_type: sql_type, key: "#{key}", **opts)
           CODE
         end

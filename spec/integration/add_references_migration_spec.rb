@@ -44,13 +44,25 @@ RSpec.describe ':add_references migration command' do
     end
   end
 
+  let(:foo_fk_constraint_on_uuid) do
+    schema_cache.connection.constraints(SocialProfile.table_name).find do |constraint|
+      constraint[:name] == "social_profiles_uuid_foreign_key"
+    end
+  end
+
+  let(:non_null_constraint) do
+    schema_cache.connection.constraints(FkTest.table_name).find do |constraint|
+      constraint[:name] == "fk_tests_user_id_foreign_key"
+    end
+  end
+
   describe '#change' do
     before(:all) do
       class AddUsersReferenceToSocialProfiles < ActiveRecord::Migration[5.1]
         def change
           add_reference :social_profiles, :user, store: :foo
           add_reference :social_profiles, :supplier, store: :foo, index: false
-          add_reference :social_profiles, :uuid, store: :foo, store_key: :uuid, type: :uuid
+          add_reference :social_profiles, :uuid, store: :foo, store_key: :uuid, type: :uuid, foreign_key: true
         end
       end
 
@@ -89,6 +101,48 @@ RSpec.describe ':add_references migration command' do
     it "creates text index on foo->>'uuid'" do
       expect(foo_index_on_uuid_text).to be_present
       expect(foo_index_on_uuid_text.columns).to eq("((foo ->> 'uuid'::text))")
+    end
+
+    it "creates a nullable check constraint fk on foo->>'uuid'" do
+      expect(foo_fk_constraint_on_uuid).to be_present
+      expect(foo_fk_constraint_on_uuid[:type]).to eq("CHECK")
+      expect(foo_fk_constraint_on_uuid[:definition]).to eq("CHECK (jsonb_foreign_key('uuids'::text, 'id'::text, foo, 'uuid'::text, 'uuid'::text, true)) NOT VALID")
+      Uuid.where(id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa').delete_all
+      expect {
+        SocialProfile.
+          new(foo: {uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}).
+          save(validate: false)
+      }.to raise_error(
+        ActiveRecord::StatementInvalid,
+        /^PG::CheckViolation:\s+ERROR:.+row.+violates\s+check\s+constraint\s+"social_profiles_uuid_foreign_key"/
+      )
+
+      expect(SocialProfile.new(foo: {uuid: nil}).save).to be true
+    end
+
+    it "creates a non-null check constraint fk on data->>'user_id'" do
+      expect(non_null_constraint).to be_present
+      expect(non_null_constraint[:type]).to eq("CHECK")
+      expect(non_null_constraint[:definition]).to eq("CHECK (jsonb_foreign_key('users'::text, 'id'::text, data, 'user_id'::text, 'bigint'::text, false)) NOT VALID")
+
+      error_reg = /^PG::CheckViolation:\s+ERROR:.+row.+violates\s+check\s+constraint\s+"fk_tests_user_id_foreign_key"/
+
+      [
+        { user_id: 0 },
+        { user_id: nil },
+        {}
+      ].each do |v|
+        expect {
+          FkTest.
+            new(data: v).
+            save(validate: false)
+        }.to raise_error(
+          ActiveRecord::StatementInvalid,
+          error_reg
+        )
+      end
+
+      expect(FkTest.new(data: {user_id: User.create.id}).save(validate: false)).to be true
     end
   end
 

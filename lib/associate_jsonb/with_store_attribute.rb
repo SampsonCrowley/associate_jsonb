@@ -34,7 +34,7 @@ module AssociateJsonb
     end
 
     included do
-      instance_eval <<-CODE, __FILE__, __LINE__ + 1
+      instance_eval <<~CODE, __FILE__, __LINE__ + 1
         initialize_store_column_attribute_tracker
 
         after_initialize &set_store_column_attribute_values_on_init
@@ -106,7 +106,7 @@ module AssociateJsonb
         array = attribute_opts[:array]
         attribute attr, cast_type, **attribute_opts
 
-        instance_eval <<-CODE, __FILE__, __LINE__ + 1
+        instance_eval <<~CODE, __FILE__, __LINE__ + 1
           add_store_column_attribute_name("#{attr}", :#{store}, "#{key}", { sql_type: sql_type, type: cast_type, opts: attribute_opts })
         CODE
 
@@ -131,14 +131,14 @@ module AssociateJsonb
 
 
         if is_array
-          mixin.class_eval <<-CODE, __FILE__, __LINE__ + 1
+          mixin.class_eval <<~CODE, __FILE__, __LINE__ + 1
             def #{attribute}
               _read_attribute(:#{attribute}) || []
             end
           CODE
         end
 
-        mixin.class_eval <<-CODE, __FILE__, __LINE__ + 1
+        mixin.class_eval <<~CODE, __FILE__, __LINE__ + 1
           def #{store}=(given)
             if !given
               given = {}

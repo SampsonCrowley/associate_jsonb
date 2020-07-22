@@ -12,14 +12,18 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/SampsonCrowley/associate_jsonb"
   s.license     = "MIT"
   s.summary     = "Store database references in PostgreSQL Jsonb columns"
-  s.description = <<-BODY
-    This gem extends ActiveRecord to let you use PostgreSQL JSONB data for associations
+  s.description = <<~BODY
+    This gem extends ActiveRecord to add additional functionality to JSONB
+
+    - use PostgreSQL JSONB data for associations
+    - thread-safe single-key updates to JSONB columns using `jsonb_set`
+    - extended `table#references` for easy migrations and indexes
+    - virtual JSONB foreign keys using check constraints
+      (NOTE: real foreign key constraints are not possible with PostgreSQL JSONB)
 
     Inspired by activerecord-jsonb-associations, but for use in Rails 6+ and
     ruby 2.7+ and with some unnecessary options and features (HABTM) removed
-
-    BONUS: extended `table#references` for easy migrations and indexes
-    (NOTE: real foreign key constraints are not possible with PostgreSQL JSONB)
+    and some additional features added
   BODY
 
   s.files = Dir[

@@ -37,6 +37,14 @@ module AssociateJsonb
             false
           end
 
+          def is_hash_insert?(o, collector)
+            collector &&
+              Array(collector.value).any? {|v| v.is_a?(String) && (v =~ /INSERT INTO/) } &&
+              AssociateJsonb.safe_hash_classes.any? {|t| o.value.type.is_a?(t) }
+          rescue
+            false
+          end
+
           def visit_Arel_Nodes_BindParam(o, collector)
             if is_hash_update?(o, collector)
               value = o.value
@@ -63,6 +71,15 @@ module AssociateJsonb
               collector << json
 
               collector
+            elsif is_hash_insert?(o, collector)
+              value = o.value
+
+              value, _, _ =
+                collect_hash_changes(
+                  {},
+                  value.value.presence || {}
+                )
+              collector.add_bind(o.value.with_cast_value(value)) { |i| "$#{i}"}
             else
               collector.add_bind(o.value) { |i| "$#{i}" }
             end
