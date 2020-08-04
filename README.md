@@ -4,7 +4,85 @@
 
 #### PostgreSQL JSONB extensions including:
   - Basic ActiveRecord Associations using PostgreSQL JSONB columns, with built-in accessors and column indexes
-  - Thread-Safe JSONB updates (well, as safe as they can be) using `jsonb_set`
+  - Thread-Safe JSONB updates (well, as safe as they can be) using a custom nested version of `jsonb_set` (`jsonb_nested_set`)
+
+**Requirements:**
+
+- PostgreSQL (>= 12)
+- Rails 6.0.3.2
+
+## Usage
+
+### Jsonb Associations
+
+
+### jsonb_set based hash updates
+
+When enabled, *only* keys present in the updated hash and with values changed in memory will be updated.
+To completely delete a key, value pair from an enabled attribute, set the key's value to `nil`.
+
+e.g.
+```ruby
+# given: instance#data == { "key_1"=>1,
+#                           "key_2"=>2,
+#                           "key_3"=> { "key_4"=>7,
+#                                       "key_5"=>8,
+#                                       "key_6"=>9 } }
+
+instance.update({ key_1: "asdf", a: 1, key_2: nil, key_3: { key_5: nil }})
+# instance#data => { "key_1"=>"asdf",
+#                    "a"=>"asdf",
+#                    "key_3"=> { "key_4"=>7,
+#                                "key_6"=>9 } }
+
+```
+
+#### enabling/adding attribute types
+first, create the sql function
+```bash
+rails g migration add_jsonb_nested_set_function
+```
+```ruby
+class CreateState < ActiveRecord::Migration[6.0]
+  def up
+    add_jsonb_nested_set_function
+  end
+end
+```
+
+then in an initializer, enable key based updates:
+```ruby
+# config/initializers/associate_jsonb.rb
+AssociateJsonb.enable_jsonb_set
+```
+
+Key based updates rely on inheritance for allowed attribute types. Any attributes that respond true to `attr_type.is_a?(GivenClass)` for any enabled type classes will use `jsonb_nested_set`
+
+To add classes to the enabled list, pass them as arguments to `AssociateJsonb.add_hash_type(*klasses)`. Any arguments passed to `AssociateJsonb.enable_jsonb_set` are forwarded to `AssociateJsonb.add_hash_type`
+
+By default, calling `AssociateJsonb.enable_jsonb_set(*klasses)` without arguments, and no classes previously added, adds `ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Jsonb` to the allowed classes list
+
+#### disabling/removing attribute types
+by default `jsonb_nested_set` updates are disabled.
+
+if you've enabled them and need to disable, use: `AssociateJsonb.disable_jsonb_set`
+
+To remove a class from the allowed list while leaving nested set updates enabled, use `AssociateJsonb.remove_hash_type(*klasses)`.
+Any arguments passed to `AssociateJsonb.disable_jsonb_set` are forwarded to `AssociateJsonb.remove_hash_type`
+
+### Automatically delete nil value hash keys
+
+When jsonb_set updates are disabled, jsonb columns are replaced with the current document (i.e. default rails behavior)
+
+You are also given the option to automatically clear nil/null values from the hash automatically
+
+in an initializer, enable stripping nil values:
+```ruby
+# config/initializers/associate_jsonb.rb
+AssociateJsonb.jsonb_delete_nil = true
+```
+
+Rules for classes to with this applies are the same as for `jsonb_nested_set`; add and remove classes through `AssociateJsonb.(add|remove)_hash_type(*klasses)`
 
 <!-- This gem was created as a solution to this [task](http://cultofmartians.com/tasks/active-record-jsonb-associations.html) from [EvilMartians](http://evilmartians.com).
 

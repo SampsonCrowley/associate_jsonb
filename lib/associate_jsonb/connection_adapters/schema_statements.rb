@@ -4,6 +4,14 @@
 module AssociateJsonb
   module ConnectionAdapters
     module SchemaStatements
+      def add_jsonb_nested_set_function
+        execute schema_creation.accept(AddJsonbNestedSetFunction.new)
+      end
+
+      def add_jsonb_foreign_key_function
+        execute schema_creation.accept(AddJsonbForeignKeyFunction.new)
+      end
+
       def create_table(table_name, **options)
         td = create_table_definition(table_name, **options)
 
@@ -44,10 +52,6 @@ module AssociateJsonb
         end
 
         result
-      end
-
-      def add_jsonb_foreign_key_function
-        execute schema_creation.accept(AddJsonForeignKeyFunction.new)
       end
 
       def add_constraint(table_name, **options)

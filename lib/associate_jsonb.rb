@@ -20,15 +20,66 @@ loader.collapse("#{__dir__}/associate_jsonb/connection_adapters/schema_definitio
 loader.setup # ready!
 
 module AssociateJsonb
-  mattr_accessor :safe_hash_classes, default: [
-    ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Jsonb
-  ]
+  mattr_accessor :jsonb_hash_types, default: []
+  mattr_accessor :jsonb_set_removed, default: []
+  mattr_accessor :jsonb_set_enabled, default: false
+  mattr_accessor :jsonb_delete_nil, default: false
+  private_class_method :jsonb_hash_types=
+  private_class_method :jsonb_set_enabled=
+
+  def self.enable_jsonb_set(klass = nil, *classes)
+    add_hash_type(*Array(klass), *classes) unless klass.nil?
+    self.jsonb_set_enabled = true
+  end
+
+  def self.disable_jsonb_set(klass = nil, *classes)
+    remove_hash_type(*Array(klass), *classes) unless klass.nil?
+    self.jsonb_set_enabled = false
+  end
+
+  def self.add_hash_type(*classes)
+    self.jsonb_hash_types |= classes.flatten
+  end
+
+  def self.remove_hash_type(*classes)
+    self.jsonb_set_removed |= classes.flatten
+  end
+
+  def self.merge_hash?(v)
+    return false unless jsonb_set_enabled && v
+    self.jsonb_hash_types.any? { |type| v.is_a?(type) }
+  end
+
+  def self.is_hash?(v)
+    self.jsonb_hash_types.any? { |type| v.is_a?(type) }
+  end
 end
 
 
 # rubocop:disable Metrics/BlockLength
 ActiveSupport.on_load :active_record do
   loader.eager_load
+  AssociateJsonb.class_eval do
+    def self.enable_jsonb_set(klass = nil, *classes)
+      if klass.nil?
+        add_hash_type ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Jsonb if jsonb_hash_types.empty?
+      else
+        add_hash_type |= [*Array(klass), *classes].flatten
+      end
+      self.jsonb_set_enabled = true
+    end
+
+    self.enable_jsonb_set if jsonb_set_enabled
+
+    def self.remove_hash_type(*classes)
+      self.jsonb_hash_types -= classes.flatten
+    end
+    removed = jsonb_set_removed
+    self.remove_hash_type removed
+    self.send :remove_method, :jsonb_set_removed
+    self.send :remove_method, :jsonb_set_removed=
+  end
+
 
   ActiveRecord::Base.include AssociateJsonb::WithStoreAttribute
   ActiveRecord::Base.include AssociateJsonb::Associations

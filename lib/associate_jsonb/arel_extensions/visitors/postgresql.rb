@@ -13,75 +13,98 @@ module AssociateJsonb
             deleted = []
             finished = {}
             keys.each do |k|
-              if original[k].is_a?(Hash) && updated[k].is_a?(Hash)
-                finished[k], a, d = collect_hash_changes(original[k], updated[k], nesting ? "#{nesting},#{k}" : k)
+              if updated[k].is_a?(Hash)
+                finished[k], a, d = collect_hash_changes(original[k].is_a?(Hash) ? original[k] : {}, updated[k], nesting ? "#{nesting},#{k}" : k)
+                a = [[(nesting ? "{#{nesting},#{k}}" : "{#{k}}"), {}]] if original[k].nil? && a.blank?
                 added |= a
                 deleted |= d
-              else
-                if updated[k].nil?
+              elsif updated[k].nil?
                   deleted << (nesting ? "{#{nesting},#{k}}" : "{#{k}}") if updated_keys.include?(k)
-                elsif original[k] != updated[k]
-                  finished[k] = updated[k]
-                  added << [(nesting ? "{#{nesting},#{k}}" : "{#{k}}"), updated[k]]
-                end
+              elsif original[k] != updated[k]
+                finished[k] = updated[k]
+                added << [(nesting ? "{#{nesting},#{k}}" : "{#{k}}"), updated[k]]
               end
             end
             [ finished, added, deleted ]
           end
 
-          def is_hash_update?(o, collector)
+          def is_hash?(type)
+            AssociateJsonb.is_hash? type
+          end
+
+          def is_update?(collector)
             collector &&
-              Array(collector.value).any? {|v| v.is_a?(String) && (v =~ /UPDATE/) } &&
-              AssociateJsonb.safe_hash_classes.any? {|t| o.value.type.is_a?(t) }
+              Array(collector.value).any? {|v| v.is_a?(String) && (v =~ /UPDATE/) }
           rescue
             false
           end
 
-          def is_hash_insert?(o, collector)
+          def is_insert?(collector)
             collector &&
-              Array(collector.value).any? {|v| v.is_a?(String) && (v =~ /INSERT INTO/) } &&
-              AssociateJsonb.safe_hash_classes.any? {|t| o.value.type.is_a?(t) }
+              Array(collector.value).any? {|v| v.is_a?(String) && (v =~ /INSERT INTO/) }
           rescue
             false
+          end
+
+          def visit_BindHashChanges(t, collector)
+            changes, additions, deletions =
+              collect_hash_changes(
+                t.original_value.presence || {},
+                t.value.presence || {}
+              )
+
+            base_json = +"COALESCE(#{quote_column_name(t.name)}, '{}'::jsonb)"
+            json = base_json
+
+            deletions.each do |del|
+              json = +"(#{json} #- '#{del}')"
+            end
+
+            coalesced_paths = []
+            additions.sort.each do |add, value|
+              collector.add_bind(t.with_value_from_user(value)) do |i|
+                json = +"jsonb_nested_set(#{json},'#{add}', COALESCE($#{i}, '{}'::jsonb))"
+                ''
+              end
+            end
+
+            collector << json
           end
 
           def visit_Arel_Nodes_BindParam(o, collector)
-            if is_hash_update?(o, collector)
-              value = o.value
+            catch(:nodes_bound) do
+              if AssociateJsonb.jsonb_set_enabled
+                catch(:not_hashable) do
+                  if is_hash?(o.value.type)
+                    if is_update?(collector)
+                      visit_BindHashChanges(o.value, collector)
 
-              changes, additions, deletions =
-                collect_hash_changes(
-                  value.original_value.presence || {},
-                  value.value.presence || {}
-                )
+                      throw :nodes_bound, collector
+                    elsif is_insert?(collector)
+                      value = o.value
 
-              json = +"COALESCE(#{quote_column_name(o.value.name)}, '{}'::jsonb)"
-
-              deletions.each do |del|
-                json = +"(#{json} #- '#{del}')"
-              end
-
-              additions.each do |add, value|
-                collector.add_bind(o.value.with_value_from_user(value)) do |i|
-                  json = +"jsonb_set(#{json},'#{add}', $#{i}, true)"
-                  ''
+                      value, _, _ =
+                        collect_hash_changes(
+                          {},
+                          value.value.presence || {}
+                        )
+                      throw :nodes_bound, collector.add_bind(o.value.with_cast_value(value)) { |i| "$#{i}"}
+                    else
+                      throw :not_hashable
+                    end
+                  else
+                    throw :not_hashable
+                  end
                 end
+              elsif AssociateJsonb.jsonb_delete_nil && is_hash?(o.value.type)
+                value, _, _ =
+                  collect_hash_changes(
+                    {},
+                    o.value.value.presence || {}
+                  )
+                throw :nodes_bound, collector.add_bind(o.value.with_cast_value(value)) { |i| "$#{i}" }
               end
-
-              collector << json
-
-              collector
-            elsif is_hash_insert?(o, collector)
-              value = o.value
-
-              value, _, _ =
-                collect_hash_changes(
-                  {},
-                  value.value.presence || {}
-                )
-              collector.add_bind(o.value.with_cast_value(value)) { |i| "$#{i}"}
-            else
-              collector.add_bind(o.value) { |i| "$#{i}" }
+              throw :nodes_bound, collector.add_bind(o.value) { |i| "$#{i}" }
             end
           end
       end

@@ -3,7 +3,7 @@
 
 module AssociateJsonb
   module ConnectionAdapters
-    class AddJsonForeignKeyFunction
+    class AddJsonbNestedSetFunction
     end
   end
 end

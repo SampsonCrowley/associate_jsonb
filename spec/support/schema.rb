@@ -21,6 +21,7 @@ ActiveRecord::Schema.define do
   enable_extension :pgcrypto
 
   add_jsonb_foreign_key_function
+  add_jsonb_nested_set_function
 
   create_table :users, force: true do |t|
     t.jsonb :extra, null: false, default: {}

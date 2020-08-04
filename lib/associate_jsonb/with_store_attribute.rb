@@ -117,18 +117,15 @@ module AssociateJsonb
     class InstanceMethodsOnActivation < Module
       def initialize(mixin, store, attribute, key, is_array)
         is_array = !!(is_array && attribute.to_s =~ /_ids$/)
-        on_attr_change =
-           is_array \
-            ? "write_attribute(:#{attribute}, Array(given))" \
-            : "super(given)"
-        on_store_change = ->(var) {
-          "write_attribute(:#{attribute}, #{
-            is_array \
-             ? "Array(#{var})" \
-             : var
-          })"
-        }
 
+        array_or_attr = ->(value) {
+          is_array \
+           ? %Q(Array(#{value})) \
+           : %Q(#{value})
+         }
+
+        on_store_change = "_write_attribute(:#{attribute}, #{array_or_attr.call %Q(#{store}["#{key}"])})"
+        on_attr_change = "super(#{array_or_attr.call %Q(given)})"
 
         if is_array
           mixin.class_eval <<~CODE, __FILE__, __LINE__ + 1
@@ -140,24 +137,32 @@ module AssociateJsonb
 
         mixin.class_eval <<~CODE, __FILE__, __LINE__ + 1
           def #{store}=(given)
-            if !given
-              given = {}
-              #{store}.keys.each do |k|
-                given[k] = nil
+            if given.is_a?(::String)
+              given = ActiveSupport::JSON.decode(given) rescue nil
+            end
+
+            if AssociateJsonb.merge_hash?(self.class.attribute_types["#{store}"])
+              if !given
+                given = {}
+                #{store}.keys.each do |k|
+                  given[k] = nil
+                end
               end
+              super(#{store}.deep_merge(given.deep_stringify_keys))
+
+              self.#{attribute}= #{store}["#{key}"] if #{store}.key?("#{key}")
+            else
+              super given || {}
+              self.#{attribute}= #{store}["#{key}"]
             end
-            super(#{store}.deep_merge(given.deep_stringify_keys))
-            if #{store}.key?("#{key}")
-              write_attribute(:#{attribute}, #{on_store_change.call %Q(#{store}["#{key}"])})
-              #{store}["#{key}"] = #{attribute}.presence
-            end
+
             #{store}
           end
 
           def #{attribute}=(given)
             #{on_attr_change}
             value = #{store}["#{key}"] = #{attribute}.presence
-            _write_attribute(:#{store}, #{store})
+            #{store}.delete("#{key}") unless !value.nil? || AssociateJsonb.merge_hash?(self.class.attribute_types["#{store}"])
             value
           end
         CODE

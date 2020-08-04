@@ -17,6 +17,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
+    AssociateJsonb.enable_jsonb_set
   end
 
   config.around(:each) do |example|

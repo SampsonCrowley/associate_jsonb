@@ -9,7 +9,7 @@ module AssociateJsonb
           sql = super
           sql << o.constraint_adds.map {|ct| visit_AddConstraint ct }.join(" ")
           sql << o.constraint_drops.map {|ct| visit_DropConstraint ct }.join(" ")
-          add_jsonb_function(sql)
+          sql
         end
 
         def visit_TableDefinition(o)
@@ -73,7 +73,7 @@ module AssociateJsonb
           SQL
         end
 
-        def visit_AddJsonForeignKeyFunction(*)
+        def visit_AddJsonbForeignKeyFunction(*)
           <<~SQL
             CREATE OR REPLACE FUNCTION jsonb_foreign_key
               (
@@ -106,6 +106,48 @@ module AssociateJsonb
           SQL
         end
 
+        def visit_AddJsonbNestedSetFunction(*)
+          <<~SQL
+            CREATE OR REPLACE FUNCTION jsonb_nested_set
+              (
+                target jsonb,
+                path text[],
+                new_value jsonb
+              )
+            RETURNS jsonb AS
+            $BODY$
+            DECLARE
+              new_json jsonb := '{}'::jsonb;
+              does_exist BOOLEAN;
+              current_path text[];
+              key text;
+            BEGIN
+              IF target #> path IS NOT NULL
+              THEN
+                return jsonb_set(target, path, new_value);
+              ELSE
+                new_json := target;
+
+                IF array_length(path, 1) > 1
+                THEN
+                  FOREACH key IN ARRAY path[:(array_length(path, 1) - 1)]
+                  LOOP
+                    current_path := array_append(current_path, key);
+                    IF new_json #> current_path IS NULL
+                    THEN
+                      new_json := jsonb_set(new_json, current_path, '{}'::jsonb, TRUE);
+                    END IF;
+                  END LOOP;
+                END IF;
+
+                return jsonb_set(new_json, path, new_value, TRUE);
+              END IF;
+            END;
+            $BODY$
+            LANGUAGE plpgsql;
+          SQL
+        end
+
         def add_column_options!(sql, opts)
           super
 
@@ -113,13 +155,6 @@ module AssociateJsonb
             sql << " #{accept(ConstraintDefinition.new(**opts[:constraint]))}"
           end
 
-          sql
-        end
-
-        def add_jsonb_function(sql)
-          if (sql =~ /jsonb_foreign_key/) && (sql !~ /FUNCTION\s+json_foreign_key/)
-            sql.insert(0, visit_AddJsonForeignKeyFunction + "\n")
-          end
           sql
         end
     end
