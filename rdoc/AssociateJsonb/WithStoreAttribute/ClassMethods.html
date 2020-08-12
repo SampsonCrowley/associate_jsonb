@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>module AssociateJsonb::WithStoreAttribute::ClassMethods - AssociateJsonb</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+  var index_rel_prefix = "../../";
+</script>
+
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/search.js" defer></script>
+<script src="../../js/search_index.js" defer></script>
+<script src="../../js/searcher.js" defer></script>
+<script src="../../js/darkfish.js" defer></script>
+
+<link href="../../css/fonts.css" rel="stylesheet">
+<link href="../../css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="module">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../../table_of_contents.html#pages">Pages</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-add_store_column_attribute_name">#add_store_column_attribute_name</a>
+    
+    <li class="calls-super" ><a href="#method-i-arel_table">#arel_table</a>
+    
+    <li ><a href="#method-i-data_column_attribute">#data_column_attribute</a>
+    
+    <li class="calls-super" ><a href="#method-i-inherited">#inherited</a>
+    
+    <li ><a href="#method-i-initialize_store_column_attribute_tracker">#initialize_store_column_attribute_tracker</a>
+    
+    <li ><a href="#method-i-is_store_column_attribute-3F">#is_store_column_attribute?</a>
+    
+    <li ><a href="#method-i-set_store_column_attribute_values_on_init">#set_store_column_attribute_values_on_init</a>
+    
+    <li ><a href="#method-i-store_column_attribute">#store_column_attribute</a>
+    
+    <li class="calls-super" ><a href="#method-i-store_column_attribute_names">#store_column_attribute_names</a>
+    
+    <li ><a href="#method-i-store_column_attribute_tracker">#store_column_attribute_tracker</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="module-AssociateJsonb::WithStoreAttribute::ClassMethods">
+  <h1 id="module-AssociateJsonb::WithStoreAttribute::ClassMethods" class="module">
+    module AssociateJsonb::WithStoreAttribute::ClassMethods
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-add_store_column_attribute_name" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add_store_column_attribute_name</span><span
+            class="method-args">(name, store, key, cast_opts)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="add_store_column_attribute_name-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">74</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_store_column_attribute_name</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">store</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">cast_opts</span>)
+<span class="line-num">75</span>   <span class="ruby-identifier">store_column_attribute_tracker</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword">do</span>
+<span class="line-num">76</span>     <span class="ruby-identifier">store_column_attribute_tracker</span>.<span class="ruby-identifier">add_name</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">store</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">cast_opts</span>)
+<span class="line-num">77</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">78</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-arel_table" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">arel_table</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+          
+
+          
+          <div class="method-source-code" id="arel_table-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">51</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">arel_table</span>
+<span class="line-num">52</span>   <span class="ruby-keyword">super</span>.<span class="ruby-identifier">with_store_tracker</span>(<span class="ruby-identifier">store_column_attribute_tracker</span>)
+<span class="line-num">53</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-data_column_attribute" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">data_column_attribute</span><span
+            class="method-args">(*args, **opts)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="data_column_attribute-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">97</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_column_attribute</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">opts</span>)
+<span class="line-num">98</span>   <span class="ruby-identifier">store_column_attribute</span> <span class="ruby-value">:data</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">opts</span>
+<span class="line-num">99</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-inherited" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">inherited</span><span
+            class="method-args">(child)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+          
+
+          
+          <div class="method-source-code" id="inherited-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">46</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">inherited</span>(<span class="ruby-identifier">child</span>)
+<span class="line-num">47</span>   <span class="ruby-identifier">child</span>.<span class="ruby-identifier">initialize_store_column_attribute_tracker</span>
+<span class="line-num">48</span>   <span class="ruby-keyword">super</span>
+<span class="line-num">49</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-initialize_store_column_attribute_tracker" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">initialize_store_column_attribute_tracker</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="initialize_store_column_attribute_tracker-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">55</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize_store_column_attribute_tracker</span>
+<span class="line-num">56</span>   <span class="ruby-ivar">@store_column_attribute_tracker</span> = <span class="ruby-identifier">const_set</span>(<span class="ruby-value">:StoreColumnAttributeTracker</span>, <span class="ruby-constant">StoreColumnAttributeTracker</span>.<span class="ruby-identifier">new</span>)
+<span class="line-num">57</span>   <span class="ruby-identifier">private_constant</span> <span class="ruby-value">:StoreColumnAttributeTracker</span>
+<span class="line-num">58</span> 
+<span class="line-num">59</span>   <span class="ruby-identifier">store_column_attribute_tracker</span>
+<span class="line-num">60</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-is_store_column_attribute-3F" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">is_store_column_attribute?</span><span
+            class="method-args">(name)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="is_store_column_attribute-3F-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">80</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_store_column_attribute?</span>(<span class="ruby-identifier">name</span>)
+<span class="line-num">81</span>   <span class="ruby-identifier">store_column_attribute_tracker</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword">do</span>
+<span class="line-num">82</span>     <span class="ruby-identifier">store_column_attribute_tracker</span>.<span class="ruby-identifier">has_name?</span>(<span class="ruby-identifier">name</span>)
+<span class="line-num">83</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">84</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-set_store_column_attribute_values_on_init" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">set_store_column_attribute_values_on_init</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="set_store_column_attribute_values_on_init-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">86</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_store_column_attribute_values_on_init</span>
+<span class="line-num">87</span>   <span class="ruby-identifier">lambda</span> <span class="ruby-keyword">do</span>
+<span class="line-num">88</span>     <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">store_column_attribute_names</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attr</span>, <span class="ruby-identifier">opts</span><span class="ruby-operator">|</span>
+<span class="line-num">89</span>       <span class="ruby-identifier">_write_attribute</span>(<span class="ruby-identifier">attr</span>, <span class="ruby-identifier">_read_attribute</span>(<span class="ruby-identifier">opts</span>[<span class="ruby-value">:store</span>])[<span class="ruby-identifier">opts</span>[<span class="ruby-value">:key</span>]])
+<span class="line-num">90</span>       <span class="ruby-identifier">clear_attribute_change</span>(<span class="ruby-identifier">attr</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">persisted?</span>
+<span class="line-num">91</span>     <span class="ruby-keyword">end</span>
+<span class="line-num">92</span>   <span class="ruby-keyword">rescue</span>
+<span class="line-num">93</span>     <span class="ruby-keyword">nil</span>
+<span class="line-num">94</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">95</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-store_column_attribute" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">store_column_attribute</span><span
+            class="method-args">(store, attr, cast_type = ActiveRecord::Type::Value.new, sql_type: nil, key: nil, **attribute_opts)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="store_column_attribute-source">
+            <pre>    <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">101</span>       <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_column_attribute</span>(<span class="ruby-identifier">store</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">cast_type</span> = <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Type</span><span class="ruby-operator">::</span><span class="ruby-constant">Value</span>.<span class="ruby-identifier">new</span>, <span class="ruby-value">sql_type:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">key:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">attribute_opts</span>)
+<span class="line-num">102</span>         <span class="ruby-identifier">store</span> = <span class="ruby-identifier">store</span>.<span class="ruby-identifier">to_sym</span>
+<span class="line-num">103</span>         <span class="ruby-identifier">attr</span> = <span class="ruby-identifier">attr</span>.<span class="ruby-identifier">to_sym</span>
+<span class="line-num">104</span>         <span class="ruby-identifier">key</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">attr</span>
+<span class="line-num">105</span>         <span class="ruby-identifier">key</span> = <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>
+<span class="line-num">106</span>         <span class="ruby-identifier">array</span> = <span class="ruby-identifier">attribute_opts</span>[<span class="ruby-value">:array</span>]
+<span class="line-num">107</span>         <span class="ruby-identifier">attribute</span> <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">cast_type</span>, <span class="ruby-operator">**</span><span class="ruby-identifier">attribute_opts</span>
+<span class="line-num">108</span> 
+<span class="line-num">109</span>         <span class="ruby-identifier">instance_eval</span> <span class="ruby-identifier">&lt;&lt;~CODE</span>, <span class="ruby-keyword">__FILE__</span>, <span class="ruby-keyword">__LINE__</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+<span class="line-num">110</span> <span class="ruby-value">          add_store_column_attribute_name(&quot;#{attr}&quot;, :#{store}, &quot;#{key}&quot;, { sql_type: sql_type, type: cast_type, opts: attribute_opts })
+<span class="line-num">111</span> </span><span class="ruby-identifier">        CODE</span>
+<span class="line-num">112</span> 
+<span class="line-num">113</span>         <span class="ruby-identifier">include</span> <span class="ruby-constant">WithStoreAttribute</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceMethodsOnActivation</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">self</span>, <span class="ruby-identifier">store</span>, <span class="ruby-identifier">attr</span>, <span class="ruby-identifier">key</span>, <span class="ruby-identifier">array</span>)
+<span class="line-num">114</span>       <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-store_column_attribute_names" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">store_column_attribute_names</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+            <div class="method-calls-super">
+              Calls superclass method
+              
+            </div>
+          
+
+          
+          <div class="method-source-code" id="store_column_attribute_names-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">66</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_column_attribute_names</span>
+<span class="line-num">67</span>   <span class="ruby-identifier">store_column_attribute_tracker</span>.<span class="ruby-identifier">synchronize</span> <span class="ruby-keyword">do</span>
+<span class="line-num">68</span>     <span class="ruby-identifier">current_store_col_names</span> = {}
+<span class="line-num">69</span>     <span class="ruby-identifier">current_store_col_names</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-keyword">super</span>) <span class="ruby-keyword">if</span> <span class="ruby-keyword">defined?</span> <span class="ruby-keyword">super</span>
+<span class="line-num">70</span>     <span class="ruby-identifier">current_store_col_names</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">store_column_attribute_tracker</span>.<span class="ruby-identifier">names_list</span>)
+<span class="line-num">71</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">72</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-store_column_attribute_tracker" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">store_column_attribute_tracker</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="store_column_attribute_tracker-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb/with_store_attribute.rb</span>
+<span class="line-num">62</span> <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_column_attribute_tracker</span>
+<span class="line-num">63</span>   <span class="ruby-ivar">@store_column_attribute_tracker</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">initialize_store_column_attribute_tracker</span>
+<span class="line-num">64</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.2.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

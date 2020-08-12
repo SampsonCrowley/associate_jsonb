@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>README - AssociateJsonb</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="file">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+<div class="nav-section">
+  <h3>Table of Contents</h3>
+
+  <ul class="link-list" role="directory">
+    <li><a href="#label-associate_jsonb">associate_jsonb</a>
+    <li><a href="#label-Easy+PostgreSQL+JSONB+extensions">Easy PostgreSQL JSONB extensions</a>
+    <li><a href="#label-Installation">Installation</a>
+    <li><a href="#label-Usage">Usage</a>
+    <li><a href="#label-Jsonb+Associations">Jsonb Associations</a>
+    <li><a href="#label-One-to-One+and+One-to-Many+associations">One-to-One and One-to-Many associations</a>
+    <li><a href="#label-Many-to-Many+associations">Many-to-Many associations</a>
+    <li><a href="#label-jsonb_set+based+hash+updates">jsonb_set based hash updates</a>
+    <li><a href="#label-enabling-2Fadding+attribute+types">enabling/adding attribute types</a>
+    <li><a href="#label-disabling-2Fremoving+attribute+types">disabling/removing attribute types</a>
+    <li><a href="#label-Automatically+delete+nil+value+hash+keys">Automatically delete nil value hash keys</a>
+    <li><a href="#label-Developing">Developing</a>
+    <li><a href="#label-License">License</a>
+  </ul>
+</div>
+
+
+  <div id="project-metadata">
+    <div id="fileindex-section" class="nav-section">
+  <h3>Pages</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./README_md.html">README</a>
+  
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-label="Page README.md">
+
+<h1 id="label-associate_jsonb">associate_jsonb<span><a href="#label-associate_jsonb">&para;</a> <a href="#top">&uarr;</a></span></h1>
+
+<p><a href="https://badge.fury.io/rb/associate_jsonb"><img src="https://badge.fury.io/rb/associate_jsonb.svg"></a></p>
+
+<h4 id="label-Easy+PostgreSQL+JSONB+extensions">Easy PostgreSQL JSONB extensions<span><a href="#label-Easy+PostgreSQL+JSONB+extensions">&para;</a> <a href="#top">&uarr;</a></span></h4>
+
+<p><strong>including:</strong></p>
+<ul><li>
+<p>Basic ActiveRecord Associations using PostgreSQL JSONB columns, with built-in accessors and column indexes</p>
+</li><li>
+<p>Thread-Safe JSONB updates (well, as safe as they can be) using a custom nested version of <code>jsonb_set</code> (<code>jsonb_nested_set</code>)</p>
+</li></ul>
+
+<p><strong>Requirements:</strong></p>
+<ul><li>
+<p>PostgreSQL (&gt;= 12)</p>
+</li><li>
+<p>Rails 6.0.3.2</p>
+</li></ul>
+
+<h2 id="label-Installation">Installation<span><a href="#label-Installation">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Add this line to your application&#39;s Gemfile:</p>
+
+<pre class="ruby"><span class="ruby-identifier">gem</span> <span class="ruby-string">&#39;associate_jsonb&#39;</span>
+</pre>
+
+<p>And then execute:</p>
+
+<pre>$ bundle install</pre>
+
+<h2 id="label-Usage">Usage<span><a href="#label-Usage">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<h3 id="label-Jsonb+Associations">Jsonb Associations<span><a href="#label-Jsonb+Associations">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<h4 id="label-One-to-One+and+One-to-Many+associations">One-to-One and One-to-Many associations<span><a href="#label-One-to-One+and+One-to-Many+associations">&para;</a> <a href="#top">&uarr;</a></span></h4>
+
+<p>To set up your jsonb column, you can use the built in <code>add_reference</code>/<code>table.references</code> function. This will only add a new store column if it doesn&#39;t already exist</p>
+
+<pre class="ruby"><span class="ruby-identifier">rails</span> <span class="ruby-identifier">g</span> <span class="ruby-identifier">migration</span> <span class="ruby-identifier">add_foreign_key_store_to_my_table</span>
+</pre>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">AddForeignKeyStoreToMyTable</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Migration</span>[<span class="ruby-value">6.0</span>]
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">change</span>
+    <span class="ruby-identifier">add_reference</span> <span class="ruby-value">:my_table</span>, <span class="ruby-value">:user</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span> <span class="ruby-comment"># =&gt; store created</span>
+    <span class="ruby-identifier">add_reference</span> <span class="ruby-value">:my_table</span>, <span class="ruby-value">:label</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span> <span class="ruby-comment"># =&gt; store already exists, NOT NULL check constraint added to `store-&gt;&#39;label_id&#39;`</span>
+    <span class="ruby-comment"># NOTE: you can also use a `change_table(:my_table) block`</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>and</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">CreateMyTable</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Migration</span>[<span class="ruby-value">6.0</span>]
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">change</span>
+    <span class="ruby-identifier">create_table</span>(<span class="ruby-value">:my_table</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">references</span> <span class="ruby-value">:user</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">references</span> <span class="ruby-value">:label</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>If you add the <code>jsonb_foreign_key</code> function to your database, you can also create a foreign_key <strong>check</strong> constraint by using the same built-in <code>:foreign_key</code> option used in normal reference definitions.</p>
+
+<p><strong>NOTE</strong>: true foreign key references are not possible with jsonb attributes. This will instead create a CHECK constraint that looks for the referenced column using an <code>EXISTS</code> statement</p>
+
+<pre class="ruby"><span class="ruby-identifier">rails</span> <span class="ruby-identifier">g</span> <span class="ruby-identifier">migration</span> <span class="ruby-identifier">add_jsonb_foreign_key_function</span>
+</pre>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">AddJsonbForeignKeyFunction</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Migration</span>[<span class="ruby-value">6.0</span>]
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">up</span>
+    <span class="ruby-identifier">add_jsonb_foreign_key_function</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">CreateMyTable</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Migration</span>[<span class="ruby-value">6.0</span>]
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">change</span>
+    <span class="ruby-identifier">create_table</span>(<span class="ruby-value">:my_table</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">references</span> <span class="ruby-value">:user</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span>, <span class="ruby-value">foreign_key:</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">CreateMyTable</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Migration</span>[<span class="ruby-value">6.0</span>]
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">change</span>
+    <span class="ruby-identifier">create_table</span>(<span class="ruby-value">:my_table</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">t</span>.<span class="ruby-identifier">references</span> <span class="ruby-value">:person</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span>, <span class="ruby-value">foreign_key:</span> { <span class="ruby-value">to_table:</span> <span class="ruby-value">:users</span> }, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>You can store all foreign keys of your model in one JSONB column, without having to create multiple columns:</p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">Profile</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-comment"># Setting additional :store option on :belongs_to association</span>
+  <span class="ruby-comment"># enables saving of foreign ids in :extra JSONB column</span>
+  <span class="ruby-identifier">belongs_to</span> <span class="ruby-value">:user</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">SocialProfile</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-identifier">belongs_to</span> <span class="ruby-value">:user</span>, <span class="ruby-value">store:</span> <span class="ruby-value">:extra</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-keyword">class</span> <span class="ruby-constant">User</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>
+  <span class="ruby-comment"># Parent model association needs to specify :foreign_store</span>
+  <span class="ruby-comment"># for associations with JSONB storage</span>
+  <span class="ruby-identifier">has_one</span> <span class="ruby-value">:profile</span>, <span class="ruby-value">foreign_store:</span> <span class="ruby-value">:extra</span>
+  <span class="ruby-identifier">has_many</span> <span class="ruby-value">:social_profiles</span>, <span class="ruby-value">foreign_store:</span> <span class="ruby-value">:extra</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<h3 id="label-Many-to-Many+associations">Many-to-Many associations<span><a href="#label-Many-to-Many+associations">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>Due to the ease of getting out-of-sync, and the complexity needed to build it, HABTM relation functionality has not been implemented through JSONB</p>
+
+<h3 id="label-jsonb_set+based+hash+updates">jsonb_set based hash updates<span><a href="#label-jsonb_set+based+hash+updates">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>When enabled, <em>only</em> keys present in the updated hash and with values changed in memory will be updated. To completely delete a <code>key/value</code> pair from an enabled attribute, set the key&#39;s value to <code>nil</code>.</p>
+
+<p>e.g.</p>
+
+<pre class="ruby"><span class="ruby-comment"># given: instance#data == { &quot;key_1&quot;=&gt;1,</span>
+<span class="ruby-comment">#                           &quot;key_2&quot;=&gt;2,</span>
+<span class="ruby-comment">#                           &quot;key_3&quot;=&gt; { &quot;key_4&quot;=&gt;7,</span>
+<span class="ruby-comment">#                                       &quot;key_5&quot;=&gt;8,</span>
+<span class="ruby-comment">#                                       &quot;key_6&quot;=&gt;9 } }</span>
+
+<span class="ruby-identifier">instance</span>.<span class="ruby-identifier">update</span>({ <span class="ruby-value">key_1:</span> <span class="ruby-string">&quot;asdf&quot;</span>, <span class="ruby-value">a:</span> <span class="ruby-value">1</span>, <span class="ruby-value">key_2:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">key_3:</span> { <span class="ruby-value">key_5:</span> <span class="ruby-keyword">nil</span> }})
+
+<span class="ruby-comment"># instance#data =&gt; { &quot;key_1&quot;=&gt;&quot;asdf&quot;,</span>
+<span class="ruby-comment">#                    &quot;a&quot;=&gt;&quot;asdf&quot;,</span>
+<span class="ruby-comment">#                    &quot;key_3&quot;=&gt; { &quot;key_4&quot;=&gt;7,</span>
+<span class="ruby-comment">#                                &quot;key_6&quot;=&gt;9 } }</span>
+</pre>
+
+<h4 id="label-enabling-2Fadding+attribute+types">enabling/adding attribute types<span><a href="#label-enabling-2Fadding+attribute+types">&para;</a> <a href="#top">&uarr;</a></span></h4>
+
+<p>first, create the sql function</p>
+
+<pre class="ruby"><span class="ruby-identifier">rails</span> <span class="ruby-identifier">g</span> <span class="ruby-identifier">migration</span> <span class="ruby-identifier">add_jsonb_nested_set_function</span>
+</pre>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">AddJsonbNestedSetFunction</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Migration</span>[<span class="ruby-value">6.0</span>]
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">up</span>
+    <span class="ruby-identifier">add_jsonb_nested_set_function</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>then in an initializer, enable key based updates:</p>
+
+<pre class="ruby"><span class="ruby-comment"># config/initializers/associate_jsonb.rb</span>
+<span class="ruby-constant">AssociateJsonb</span>.<span class="ruby-identifier">enable_jsonb_set</span>
+</pre>
+<ul><li>
+<p>Key based updates rely on inheritance for allowed attribute types. Any attributes that respond true to <code>attr_type.is_a?(GivenClass)</code> for any enabled type classes will use <code>jsonb_nested_set</code></p>
+</li><li>
+<p>To add classes to the enabled list, pass them as arguments to <code>AssociateJsonb.add_hash_type(*klasses)</code>. Any arguments passed to <code>AssociateJsonb.enable_jsonb_set</code> are forwarded to <code>AssociateJsonb.add_hash_type</code></p>
+</li><li>
+<p>By default, calling <code>AssociateJsonb.enable_jsonb_set(*klasses)</code> without arguments, and no classes previously added, adds <code>ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Jsonb</code> to the allowed classes list</p>
+</li></ul>
+
+<h4 id="label-disabling-2Fremoving+attribute+types">disabling/removing attribute types<span><a href="#label-disabling-2Fremoving+attribute+types">&para;</a> <a href="#top">&uarr;</a></span></h4>
+<ul><li>
+<p>by default <code>jsonb_nested_set</code> updates are disabled.</p>
+</li><li>
+<p>if you&#39;ve enabled them and need to disable, use: <code>AssociateJsonb.disable_jsonb_set</code></p>
+</li><li>
+<p>To remove a class from the allowed list while leaving nested set updates enabled, use <code>AssociateJsonb.remove_hash_type(*klasses)</code>. Any arguments passed to <code>AssociateJsonb.disable_jsonb_set</code> are forwarded to <code>AssociateJsonb.remove_hash_type</code></p>
+</li></ul>
+
+<h3 id="label-Automatically+delete+nil+value+hash+keys">Automatically delete nil value hash keys<span><a href="#label-Automatically+delete+nil+value+hash+keys">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>When jsonb_set updates are disabled, jsonb columns are replaced with the current document (i.e. default rails behavior)</p>
+
+<p>You are also given the option to automatically clear nil/null values from the hash automatically when jsonb_set is disabled</p>
+
+<p>in an initializer:</p>
+
+<pre class="ruby"><span class="ruby-comment"># config/initializers/associate_jsonb.rb</span>
+<span class="ruby-constant">AssociateJsonb</span>.<span class="ruby-identifier">jsonb_delete_nil</span> = <span class="ruby-keyword">true</span>
+</pre>
+
+<p>Rules for classes to which this applies are the same as for <code>jsonb_nested_set</code>; add and remove classes through <code>AssociateJsonb.(add|remove)_hash_type(*klasses)</code></p>
+
+<h2 id="label-Developing">Developing<span><a href="#label-Developing">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>To setup development environment, run:</p>
+
+<pre>$ bin/setup</pre>
+
+<p>To run specs:</p>
+
+<pre>$ bundle exec rspec</pre>
+
+<h2 id="label-License">License<span><a href="#label-License">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>The gem is available as open source under the terms of the <a href="http://opensource.org/licenses/MIT">MIT License</a>.</p>
+
+</main>
+
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.2.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

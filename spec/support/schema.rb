@@ -73,6 +73,10 @@ ActiveRecord::Schema.define do
     t.references :user, store: :data, index: false, foreign_key: true, null: false
   end
 
+  create_table :null_tests, force: true do |t|
+    t.references :user, store: :data, index: false, null: false
+  end
+
   create_table :groups, force: true do |t|
     t.timestamps null: false
   end

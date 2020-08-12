@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require 'fileutils'
+include FileUtils
+
+# path to your application root.
+APP_ROOT = File.expand_path('..', __dir__)
+VERSION_REG = /VERSION\s*=\s*['"]([^'"]+)['"]/
+chdir APP_ROOT do
+  Dir["#{APP_ROOT}/lib/associate_jsonb/version.rb"].map do |file|
+    txt = File.read(file)
+    version = txt[VERSION_REG, 1].split(".")
+    version[-1] = version[-1].to_i + 1
+    txt.sub!(VERSION_REG, %Q(VERSION = "#{version.join(".")}"))
+    puts "New Version: #{version.join(".")}"
+    File.open(file, 'w') {|f| f << txt}
+  end
+end

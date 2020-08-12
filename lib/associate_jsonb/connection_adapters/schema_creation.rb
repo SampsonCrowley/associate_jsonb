@@ -89,9 +89,14 @@ module AssociateJsonb
             DECLARE
               does_exist BOOLEAN;
             BEGIN
-              IF store->key IS NULL
+              IF store->>key IS NULL
               THEN
                 return nullable;
+              END IF;
+
+              IF store->>key = ''
+              THEN
+                return FALSE;
               END IF;
 
               EXECUTE FORMAT('SELECT EXISTS (SELECT 1 FROM %1$I WHERE %1$I.%2$I = CAST($1 AS ' || type || '))', table_name, foreign_key)

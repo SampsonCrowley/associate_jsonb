@@ -60,11 +60,25 @@ module AssociateJsonb
               deferrable: true
             )
           end
+        elsif !nullable
+          columns.each do |col_name, *|
+            value = <<-SQL.squish
+              #{store}->>'#{col_name}' IS NOT NULL
+              AND
+              #{store}->>'#{col_name}' <> ''
+            SQL
+            table.constraint(
+              name: "#{table.name}_#{col_name}_not_null",
+              value: value,
+              not_valid: false,
+              deferrable: true
+            )
+          end
         end
 
         return unless index
 
-        columns.each do |col_name, type, opts|
+        columns.each do |col_name, type, *|
           type = :text if type == :string
           table.index(
             "CAST (\"#{store}\"->>'#{col_name}' AS #{type || :bigint})",

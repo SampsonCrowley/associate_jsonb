@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Object - AssociateJsonb</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/navigation.js" defer></script>
+<script src="./js/search.js" defer></script>
+<script src="./js/search_index.js" defer></script>
+<script src="./js/searcher.js" defer></script>
+<script src="./js/darkfish.js" defer></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link">BasicObject
+  
+</div>
+
+    <div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+  
+  
+    <li><a class="include" href="AssociateJsonb/WithStoreAttribute.html">AssociateJsonb::WithStoreAttribute</a>
+  
+  
+  
+    <li><a class="include" href="AssociateJsonb/Associations.html">AssociateJsonb::Associations</a>
+  
+  
+  
+    <li><a class="include" href="AssociateJsonb/AttributeMethods.html">AssociateJsonb::AttributeMethods</a>
+  
+  
+  
+    <li><a class="include" href="AssociateJsonb/Persistence.html">AssociateJsonb::Persistence</a>
+  
+  
+  
+    <li><a class="include" href="AssociateJsonb/ArelNodes.html">AssociateJsonb::ArelNodes</a>
+  
+  
+  </ul>
+</div>
+
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-c-enable_jsonb_set">::enable_jsonb_set</a>
+    
+    <li ><a href="#method-c-remove_hash_type">::remove_hash_type</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Object">
+  <h1 id="class-Object" class="class">
+    class Object
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Class Methods</h3>
+       </header>
+
+    
+      <div id="method-c-enable_jsonb_set" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">enable_jsonb_set</span><span
+            class="method-args">(klass = nil, *classes)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="enable_jsonb_set-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb.rb</span>
+<span class="line-num">63</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">enable_jsonb_set</span>(<span class="ruby-identifier">klass</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">classes</span>)
+<span class="line-num">64</span>   <span class="ruby-keyword">if</span> <span class="ruby-identifier">klass</span>.<span class="ruby-identifier">nil?</span>
+<span class="line-num">65</span>     <span class="ruby-identifier">add_hash_type</span> <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">ConnectionAdapters</span><span class="ruby-operator">::</span><span class="ruby-constant">PostgreSQL</span><span class="ruby-operator">::</span><span class="ruby-constant">OID</span><span class="ruby-operator">::</span><span class="ruby-constant">Jsonb</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">jsonb_hash_types</span>.<span class="ruby-identifier">empty?</span>
+<span class="line-num">66</span>   <span class="ruby-keyword">else</span>
+<span class="line-num">67</span>     <span class="ruby-identifier">add_hash_type</span> <span class="ruby-operator">|=</span> [<span class="ruby-operator">*</span><span class="ruby-constant">Array</span>(<span class="ruby-identifier">klass</span>), <span class="ruby-operator">*</span><span class="ruby-identifier">classes</span>].<span class="ruby-identifier">flatten</span>
+<span class="line-num">68</span>   <span class="ruby-keyword">end</span>
+<span class="line-num">69</span>   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">jsonb_set_enabled</span> = <span class="ruby-keyword">true</span>
+<span class="line-num">70</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-c-remove_hash_type" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">remove_hash_type</span><span
+            class="method-args">(*classes)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="remove_hash_type-source">
+            <pre>   <span class="ruby-comment"># File lib/associate_jsonb.rb</span>
+<span class="line-num">74</span> <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">remove_hash_type</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">classes</span>)
+<span class="line-num">75</span>   <span class="ruby-keyword">self</span>.<span class="ruby-identifier">jsonb_hash_types</span> <span class="ruby-operator">-=</span> <span class="ruby-identifier">classes</span>.<span class="ruby-identifier">flatten</span>
+<span class="line-num">76</span> <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.2.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

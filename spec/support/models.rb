@@ -87,3 +87,7 @@ end
 class FkTest < ActiveRecord::Base
   belongs_to :user, store: :data, required: true
 end
+
+class NullTest < ActiveRecord::Base
+  belongs_to :user, store: :data, required: true
+end

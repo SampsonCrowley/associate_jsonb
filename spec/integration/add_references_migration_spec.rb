@@ -50,9 +50,15 @@ RSpec.describe ':add_references migration command' do
     end
   end
 
-  let(:non_null_constraint) do
+  let(:fk_test_constraint) do
     schema_cache.connection.constraints(FkTest.table_name).find do |constraint|
       constraint[:name] == "fk_tests_user_id_foreign_key"
+    end
+  end
+
+  let(:non_null_constraint) do
+    schema_cache.connection.constraints(NullTest.table_name).find do |constraint|
+      constraint[:name] == "null_tests_user_id_not_null"
     end
   end
 
@@ -103,7 +109,7 @@ RSpec.describe ':add_references migration command' do
       expect(foo_index_on_uuid_text.columns).to eq("((foo ->> 'uuid'::text))")
     end
 
-    it "creates a nullable check constraint fk on foo->>'uuid'" do
+    it "creates a nullable fk check constraint on foo->>'uuid'" do
       expect(foo_fk_constraint_on_uuid).to be_present
       expect(foo_fk_constraint_on_uuid[:type]).to eq("CHECK")
       expect(foo_fk_constraint_on_uuid[:definition]).to eq("CHECK (jsonb_foreign_key('uuids'::text, 'id'::text, foo, 'uuid'::text, 'uuid'::text, true)) NOT VALID")
@@ -120,16 +126,18 @@ RSpec.describe ':add_references migration command' do
       expect(SocialProfile.new(foo: {uuid: nil}).save).to be true
     end
 
-    it "creates a non-null check constraint fk on data->>'user_id'" do
-      expect(non_null_constraint).to be_present
-      expect(non_null_constraint[:type]).to eq("CHECK")
-      expect(non_null_constraint[:definition]).to eq("CHECK (jsonb_foreign_key('users'::text, 'id'::text, data, 'user_id'::text, 'bigint'::text, false)) NOT VALID")
+    it "creates a non-null fk check constraint on data->>'user_id'" do
+      expect(fk_test_constraint).to be_present
+      expect(fk_test_constraint[:type]).to eq("CHECK")
+      expect(fk_test_constraint[:definition]).to eq("CHECK (jsonb_foreign_key('users'::text, 'id'::text, data, 'user_id'::text, 'bigint'::text, false)) NOT VALID")
 
       error_reg = /^PG::CheckViolation:\s+ERROR:.+row.+violates\s+check\s+constraint\s+"fk_tests_user_id_foreign_key"/
 
       [
         { user_id: 0 },
         { user_id: nil },
+        { user_id: '' },
+        { user_id: 'a' },
         {}
       ].each do |v|
         expect {
@@ -140,9 +148,72 @@ RSpec.describe ':add_references migration command' do
           ActiveRecord::StatementInvalid,
           error_reg
         )
+
+        error_reg = /^PG::CheckViolation:\s+ERROR:.+row.+violates\s+check\s+constraint\s+"fk_tests_user_id_foreign_key"/
+        invalid_reg = /^PG::InvalidTextRepresentation:\s+ERROR:\s*invalid\s+input\s+syntax\s+for\s+type/
+        statement_reg = Regexp.union(error_reg, invalid_reg)
+
+        expect {
+          FkTest.transaction do
+            FkTest.connection.execute <<~SQL
+              INSERT INTO fk_tests (data) VALUES ('#{ActiveSupport::JSON.encode(v)}')
+            SQL
+          end
+        }.to raise_error(
+          ActiveRecord::StatementInvalid,
+          statement_reg
+        )
       end
 
       expect(FkTest.new(data: {user_id: User.create.id}).save(validate: false)).to be true
+    end
+
+    it "creates a non-null check constraint on data->>'user_id'" do
+      expect(non_null_constraint).to be_present
+      expect(non_null_constraint[:type]).to eq("CHECK")
+      expect(non_null_constraint[:definition]).to eq("CHECK ((((data ->> 'user_id'::text) IS NOT NULL) AND ((data ->> 'user_id'::text) <> ''::text)))")
+
+      error_reg = /^PG::CheckViolation:\s+ERROR:.+row.+violates\s+check\s+constraint\s+"null_tests_user_id_not_null"/
+
+      [
+        { user_id: nil },
+        { user_id: '' },
+        {}
+      ].each do |v|
+        expect {
+          NullTest.
+            new(data: v).
+            save(validate: false)
+        }.to raise_error(
+          ActiveRecord::StatementInvalid,
+          error_reg
+        )
+
+        expect {
+          NullTest.transaction do
+            NullTest.connection.execute <<~SQL
+              INSERT INTO null_tests (data) VALUES ('#{ActiveSupport::JSON.encode(v)}')
+            SQL
+          end
+        }.to raise_error(
+          ActiveRecord::StatementInvalid,
+          error_reg
+        )
+      end
+
+      [
+        { user_id: 0 },
+        { user_id: 'a' },
+        { user_id: User.maximum(:id).to_i + 1 },
+      ].each do |v|
+        expect(NullTest.new(data: v).save(validate: false)).to be true
+        NullTest.transaction do
+          NullTest.connection.execute <<~SQL
+            INSERT INTO null_tests (data) VALUES ('#{ActiveSupport::JSON.encode(v)}')
+          SQL
+        end
+      end
+
     end
   end
 
