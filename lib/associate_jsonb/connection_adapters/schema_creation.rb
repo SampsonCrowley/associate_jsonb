@@ -156,8 +156,9 @@ module AssociateJsonb
         def add_column_options!(sql, opts)
           super
 
-          if opts[:constraint]
-            sql << " #{accept(ConstraintDefinition.new(**opts[:constraint]))}"
+          if constraint_opts = opts[:constraint]
+            constraint_opts = { value: constraint_opts } unless constraint_opts.is_a?(Hash)
+            sql << " #{accept(ConstraintDefinition.new(**constraint_opts))}"
           end
 
           sql

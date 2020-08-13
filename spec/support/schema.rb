@@ -75,6 +75,7 @@ ActiveRecord::Schema.define do
 
   create_table :null_tests, force: true do |t|
     t.references :user, store: :data, index: false, null: false
+    t.text :abbr, null: false, default: "AA", constraint: "char_length(abbr) = 2"
   end
 
   create_table :groups, force: true do |t|

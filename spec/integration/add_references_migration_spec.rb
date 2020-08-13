@@ -62,6 +62,14 @@ RSpec.describe ':add_references migration command' do
     end
   end
 
+  let(:abbr_length_constraint) do
+    schema_cache.connection.constraints(NullTest.table_name).find do |constraint|
+      if constraint[:name] =~ /^rails_constraint_-?[0-9]+_v_d$/
+        !!(constraint[:definition] =~ /char_length\(abbr\)/)
+      end
+    end
+  end
+
   describe '#change' do
     before(:all) do
       class AddUsersReferenceToSocialProfiles < ActiveRecord::Migration[5.1]
@@ -210,6 +218,53 @@ RSpec.describe ':add_references migration command' do
         NullTest.transaction do
           NullTest.connection.execute <<~SQL
             INSERT INTO null_tests (data) VALUES ('#{ActiveSupport::JSON.encode(v)}')
+          SQL
+        end
+      end
+
+    end
+
+    it "creates a text-length check constraint on abbr" do
+      expect(abbr_length_constraint).to be_present
+      expect(abbr_length_constraint[:type]).to eq("CHECK")
+      expect(abbr_length_constraint[:definition]).to eq("CHECK ((char_length(abbr) = 2))")
+
+      error_reg = /^PG::CheckViolation:\s+ERROR:.+row.+violates\s+check\s+constraint\s+"rails_constraint_-?[0-9]+_v_d"/
+
+      data = { user_id: 0 }
+
+      [
+        'asd',
+        'a',
+      ].each do |v|
+        expect {
+          NullTest.
+            new(data: data, abbr: v).
+            save(validate: false)
+        }.to raise_error(
+          ActiveRecord::StatementInvalid,
+          error_reg
+        )
+
+        expect {
+          NullTest.transaction do
+            NullTest.connection.execute <<~SQL
+              INSERT INTO null_tests (data, abbr) VALUES ('#{ActiveSupport::JSON.encode(data)}', '#{v}')
+            SQL
+          end
+        }.to raise_error(
+          ActiveRecord::StatementInvalid,
+          error_reg
+        )
+      end
+
+      [
+        'as',
+      ].each do |v|
+        expect(NullTest.new(data: data, abbr: v).save(validate: false)).to be true
+        NullTest.transaction do
+          NullTest.connection.execute <<~SQL
+            INSERT INTO null_tests (data, abbr) VALUES ('#{ActiveSupport::JSON.encode(data)}', #{v ? "'#{v}'" : 'NULL'})
           SQL
         end
       end
