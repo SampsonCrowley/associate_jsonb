@@ -5,6 +5,12 @@ pkg/
 .DS_Store
 .pry_history
 
+/bin/*
+!/bin/compile_and_push_version
+!/bin/console
+!/bin/setup
+!/bin/version
+
 associate_jsonb-*.gem
 
 spec/config/database.yml

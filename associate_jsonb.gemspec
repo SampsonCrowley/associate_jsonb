@@ -43,5 +43,5 @@ Gem::Specification.new do |s|
   s.add_dependency "zeitwerk", "~> 2",   ">= 2.2.2"
   s.add_dependency "mutex_m",  "~> 0.1", ">= 0.1.0"
 
-  s.add_development_dependency "rspec", "~> 3.7.0"
+  s.add_development_dependency "rspec", "~> 3.9"
 end

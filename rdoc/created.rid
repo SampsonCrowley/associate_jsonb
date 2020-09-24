@@ -1,6 +1,6 @@
-Wed, 12 Aug 2020 12:03:51 -0600
+Thu, 24 Sep 2020 13:30:05 -0600
 README.md	Wed, 12 Aug 2020 12:02:20 -0600
-lib/associate_jsonb.rb	Fri, 24 Jul 2020 16:05:32 -0600
+lib/associate_jsonb.rb	Thu, 24 Sep 2020 13:28:47 -0600
 lib/associate_jsonb/arel_extensions/nodes/binary.rb	Wed, 15 Jul 2020 17:42:00 -0600
 lib/associate_jsonb/arel_extensions/nodes/table_alias.rb	Wed, 15 Jul 2020 17:49:33 -0600
 lib/associate_jsonb/arel_extensions/table.rb	Sun, 19 Jul 2020 12:03:34 -0600
@@ -30,7 +30,7 @@ lib/associate_jsonb/associations/preloader/association.rb	Tue, 14 Jul 2020 00:46
 lib/associate_jsonb/attribute_methods.rb	Mon, 20 Jul 2020 15:47:13 -0600
 lib/associate_jsonb/attribute_methods/read.rb	Mon, 20 Jul 2020 15:43:31 -0600
 lib/associate_jsonb/connection_adapters.rb	Fri, 10 Jul 2020 00:44:04 -0600
-lib/associate_jsonb/connection_adapters/schema_creation.rb	Tue, 04 Aug 2020 12:04:32 -0600
+lib/associate_jsonb/connection_adapters/schema_creation.rb	Thu, 13 Aug 2020 16:53:59 -0600
 lib/associate_jsonb/connection_adapters/schema_definitions/add_jsonb_foreign_key_function.rb	Mon, 03 Aug 2020 16:52:10 -0600
 lib/associate_jsonb/connection_adapters/schema_definitions/add_jsonb_nested_set_function.rb	Mon, 03 Aug 2020 16:51:29 -0600
 lib/associate_jsonb/connection_adapters/schema_definitions/alter_table.rb	Tue, 21 Jul 2020 16:16:05 -0600
@@ -44,5 +44,5 @@ lib/associate_jsonb/predicate_builder.rb	Mon, 20 Jul 2020 20:28:57 -0600
 lib/associate_jsonb/reflection.rb	Sun, 19 Jul 2020 11:43:47 -0600
 lib/associate_jsonb/relation/where_clause.rb	Mon, 20 Jul 2020 15:45:16 -0600
 lib/associate_jsonb/supported_rails_version.rb	Tue, 14 Jul 2020 03:25:02 -0600
-lib/associate_jsonb/version.rb	Tue, 04 Aug 2020 14:49:46 -0600
+lib/associate_jsonb/version.rb	Thu, 13 Aug 2020 16:52:26 -0600
 lib/associate_jsonb/with_store_attribute.rb	Mon, 03 Aug 2020 20:36:21 -0600
