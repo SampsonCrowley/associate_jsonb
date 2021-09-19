@@ -2,5 +2,5 @@
 # frozen_string_literal: true
 
 module AssociateJsonb
-  VERSION = "0.0.10"
+  VERSION = "6.1.4.1.1"
 end

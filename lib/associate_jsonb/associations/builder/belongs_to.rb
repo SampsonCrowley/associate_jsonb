@@ -5,6 +5,29 @@ module AssociateJsonb
   module Associations
     module Builder
       module BelongsTo #:nodoc:
+        # Maybe convert to builder callbacks here in next iteration
+        # def define_callbacks(model, reflection)
+        #   super
+        #   add_after_jsonb_initialize_callbacks(model, reflection) if reflection.jsonb_store?
+        #   add_after_foreign_store_initialize_callbacks(model, reflection) if reflection.foreign_store?
+        # end
+        #
+        # def add_after_jsonb_initialize_callbacks(model, reflection)
+        #   model.after_initialize lambda {|record|
+        #     association = association(reflection.name)
+        #     p model, reflection.join_primary_key, reflection.join_foreign_key, reflection.options
+        #     p record.attributes
+        #     # record.attributes._write_attribute()
+        #   }
+        # end
+        #
+        # def add_after_foreign_store_initialize_callbacks(model, reflection)
+        #   model.after_initialize lambda {|record|
+        #     association = association(reflection.name)
+        #     # record.attributes._write_attribute()
+        #   }
+        # end
+
         def valid_options(options)
           super + %i[ store store_key ]
         end
@@ -18,7 +41,7 @@ module AssociateJsonb
         end
 
         def add_association_accessor_methods(mixin, reflection)
-          foreign_key = reflection.foreign_key.to_s
+          foreign_key = reflection.join_foreign_key.to_s
           key = (reflection.jsonb_store_key || foreign_key).to_s
           store = reflection.jsonb_store_attr
 
@@ -35,8 +58,8 @@ module AssociateJsonb
           foreign_type = :integer
           sql_type = "numeric"
           begin
-            primary_key = reflection.active_record_primary_key.to_s
-            primary_column = reflection.klass.columns.find {|col| col.name == primary_key }
+            primary_key = reflection.join_primary_key.to_s
+            primary_column = reflection.klass.columns_hash[primary_key]
 
             if primary_column
               foreign_type = primary_column.type

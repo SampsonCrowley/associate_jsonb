@@ -4,17 +4,13 @@
 module AssociateJsonb
   module Associations
     module AssociationScope #:nodoc:
-
       def get_chain(reflection, association, tracker)
         name = reflection.name
         chain = [ActiveRecord::Reflection::RuntimeReflection.new(reflection, association)]
         reflection.chain.drop(1).each do |refl|
-          aliased_table = tracker.aliased_table_for(
-            refl.table_name,
-            refl.alias_candidate(name),
-            refl.klass.type_caster,
-            refl.klass.store_column_attribute_tracker
-          )
+          aliased_table = tracker.aliased_table_for(refl.klass.arel_table, store_tracker: refl.klass.store_column_attribute_tracker) do
+            refl.alias_candidate(name)
+          end
           chain << ActiveRecord::Associations::AssociationScope::ReflectionProxy.new(refl, aliased_table)
         end
         chain
@@ -25,18 +21,19 @@ module AssociateJsonb
         reflection = owner_reflection.instance_variable_get(:@reflection)
         return super unless reflection&.foreign_store?
 
+        primary_key = reflection.join_primary_key
+        foreign_key = reflection.join_foreign_key
+        store_key = reflection.foreign_store_key || primary_key
 
-        join_keys = owner_reflection.join_keys
         table = owner_reflection.aliased_table
-        key = reflection.foreign_store_key || join_keys.key
-        value = transform_value(owner[join_keys.foreign_key])
+        value = transform_value(owner[foreign_key])
 
         apply_jsonb_equality(
           scope,
           table,
           reflection.foreign_store_attr,
-          key.to_s,
-          join_keys.foreign_key,
+          store_key.to_s,
+          owner_reflection.join_foreign_key,
           value,
           reflection.active_record
         )

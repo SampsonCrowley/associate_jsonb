@@ -10,7 +10,9 @@ db_config = {
   database: "associate_jsonb_gem_test",
   username: db_config.fetch("username"),
   min_messages: "warning"
-}.with_indifferent_access
+}
+
+db_config = ActiveRecord::DatabaseConfigurations.new({ test: db_config }).find_db_config(:test)
 
 ActiveRecord::Base.establish_connection(db_config)
 
@@ -92,8 +94,13 @@ end
 original_schema = ENV["SCHEMA"]
 
 dump_new_schema = ->(ext, type = nil) do
+  ActiveRecord::Tasks::DatabaseTasks.db_dir = File.expand_path("../../config/", __FILE__)
   ENV["SCHEMA"] = File.expand_path("../../config/schema.#{ext}", __FILE__)
   ActiveRecord::Tasks::DatabaseTasks.dump_schema(db_config, type || ext)
+rescue
+  puts $!.message
+  puts $!.backtrace&.join("\n")
+  raise
 ensure
   ENV["SCHEMA"] = original_schema
 end

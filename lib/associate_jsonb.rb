@@ -187,6 +187,10 @@ ActiveSupport.on_load :active_record do
     AssociateJsonb::Associations::Preloader::Association
   )
 
+  ActiveRecord::Associations::ForeignAssociation.prepend(
+    AssociateJsonb::Associations::ForeignAssociation
+  )
+
   %i[
     AlterTable
     ConstraintDefinition

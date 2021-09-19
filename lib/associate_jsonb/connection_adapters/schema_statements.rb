@@ -12,38 +12,43 @@ module AssociateJsonb
         execute schema_creation.accept(AddJsonbForeignKeyFunction.new)
       end
 
-      def create_table(table_name, **options)
-        td = create_table_definition(table_name, **options)
+      def create_table(table_name, id: :primary_key, primary_key: nil, force: nil, **options)
+        td = create_table_definition(table_name, **extract_table_options!(options))
 
-        if options[:id] != false && !options[:as]
-          pk = options.fetch(:primary_key) do
-            ActiveRecord::Base.get_primary_key table_name.to_s.singularize
+        if id && !td.as
+          pk = primary_key || ActiveRecord::Base.get_primary_key(table_name.to_s.singularize)
+
+          if id.is_a?(Hash)
+            options.merge!(id.except(:type))
+            id = id.fetch(:type, :primary_key)
           end
 
           if pk.is_a?(Array)
             td.primary_keys pk
           else
-            td.primary_key pk, options.fetch(:id, :primary_key), **options.except(:comment)
+            td.primary_key pk, id, **options
           end
         end
 
         yield td if block_given?
 
-        if options[:force]
-          drop_table(table_name, **options, if_exists: true)
+        if force
+          drop_table(table_name, force: force, if_exists: true)
+        else
+          schema_cache.clear_data_source_cache!(table_name.to_s)
         end
 
         result = execute schema_creation.accept td
 
         td.indexes.each do |column_name, index_options|
-          add_index(table_name, column_name, index_options)
+          add_index(table_name, column_name, **index_options, if_not_exists: td.if_not_exists)
         end
 
         td.constraints.each do |ct|
           add_constraint(table_name, **ct)
         end
 
-        if table_comment = options[:comment].presence
+        if table_comment = td.comment.presence
           change_table_comment(table_name, table_comment)
         end
 

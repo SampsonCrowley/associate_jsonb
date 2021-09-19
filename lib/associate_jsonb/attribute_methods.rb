@@ -11,8 +11,8 @@ module AssociateJsonb
 
     private
       def attributes_with_info(attribute_names)
-        attribute_names.each_with_object({}) do |name, attrs|
-          attrs[name] = _fetch_attribute(name)
+        attribute_names.index_with do |name|
+          _fetch_attribute(name)
         end
       end
   end

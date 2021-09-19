@@ -18,7 +18,7 @@ module AssociateJsonb
     end
 
     def jsonb_store_key
-      options[:store_key].presence || join_keys.foreign_key
+      options[:store_key].presence || join_foreign_key
     end
 
     def foreign_store?
@@ -36,7 +36,7 @@ module AssociateJsonb
     end
 
     def foreign_store_key
-      options[:foreign_store_key].presence || join_keys.key
+      options[:foreign_store_key].presence || join_primary_key
     end
 
     def join_scope(table, foreign_table, foreign_klass)
@@ -52,8 +52,8 @@ module AssociateJsonb
 
       scope_chain_items.inject(klass_scope, &:merge!)
 
-      key         = join_keys.key
-      foreign_key = join_keys.foreign_key
+      key         = join_primary_key
+      foreign_key = join_foreign_key
 
       if foreign_store?
         klass_scope.where!(

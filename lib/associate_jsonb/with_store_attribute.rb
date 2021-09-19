@@ -99,15 +99,15 @@ module AssociateJsonb
       end
 
       def store_column_attribute(store, attr, cast_type = ActiveRecord::Type::Value.new, sql_type: nil, key: nil, **attribute_opts)
-        store = store.to_sym
-        attr = attr.to_sym
+        store = store.to_s
+        attr = attr.to_s
         key ||= attr
         key = key.to_s
         array = attribute_opts[:array]
         attribute attr, cast_type, **attribute_opts
 
         instance_eval <<~CODE, __FILE__, __LINE__ + 1
-          add_store_column_attribute_name("#{attr}", :#{store}, "#{key}", { sql_type: sql_type, type: cast_type, opts: attribute_opts })
+          add_store_column_attribute_name(attr, store, key, { sql_type: sql_type, type: cast_type, opts: attribute_opts })
         CODE
 
         include WithStoreAttribute::InstanceMethodsOnActivation.new(self, store, attr, key, array)
@@ -120,9 +120,9 @@ module AssociateJsonb
 
         array_or_attr = ->(value) {
           is_array \
-           ? %Q(Array(#{value})) \
-           : %Q(#{value})
-         }
+            ? %Q(Array(#{value})) \
+            : %Q(#{value})
+        }
 
         on_store_change = "_write_attribute(:#{attribute}, #{array_or_attr.call %Q(#{store}["#{key}"])})"
         on_attr_change = "super(#{array_or_attr.call %Q(given)})"

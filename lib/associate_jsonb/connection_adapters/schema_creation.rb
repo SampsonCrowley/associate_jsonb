@@ -30,7 +30,7 @@ module AssociateJsonb
           end
 
           create_sql << "(#{statements.join(', ')})" if statements.present?
-          add_table_options!(create_sql, table_options(o))
+          add_table_options!(create_sql, o)
           create_sql << " AS #{to_sql(o.as)}" if o.as
           create_sql
         end
